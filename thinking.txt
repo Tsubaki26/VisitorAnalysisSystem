@@ -1,0 +1,125 @@
+とってるデータ
+方向性をまとめる
+データベースを勉強しておく
+
+元々考えていた方法
+１．tesseractOCR の WordBoxBuilder（認識範囲の座標を取得できる）を用いて文字を認識．
+２．数字を読み取った後，数字の部分だけを塗りつぶし，地域とひらがなを残す．
+３．地域とひらがなを読み取る．
+問題点
+・認識範囲がずれていることが多く，数字だけを消せない．
+
+↓
+１．画像を１文字ずつ分割．
+２．各画像を数字，文字，その他（ネジとか）に分ける．
+３．数字，文字を認識
+問題点
+枠がついていると分割できないことがある．
+　→ハフ変換で四角形を検出し，条件以上の大きさの四角形が検出された場合，そこを切り取る．
+
+ネジの処理
+　ハフ変換で円を検出して，白で塗りつぶすとか
+
+まずフローを考える
+YoLo
+Cuda
+
+！！！！　月1で成果を報告　！！！！
+
+MyPCが本当にNvidiaのGPUを使えているか確認
+　もしかしたら充電中しか使われていないかも
+　そもそもARMの方しか使われていない可能性もある
+
+追加学習ができるように！
+処理時間と演算時間は一緒
+　全体と詳細（各認識にかかる時間）
+
+ヒストグラム法で画像を分割する際，上と下のノイズも最小値を見て消す．
+
+WSLを用いる理由
+　TensorFlowは今後バージョン2.11以降はWindowsネイティブ環境はサポートされず、
+　WSL経由での提供になるとのことです。そこで、WSL上に環境を作っていきます。
+　https://happy-shibusawake.com/windows_tensorflow/884/#toc6
+
+ひらがなの認識
+　・もっとぼかしの強い学習データを追加した方がいい．
+　・もっと文字を太くした学習データを追加した方がいい．
+
+分類番号に追加されたアルファベットは、A・C・F・H・K・L・M・P・X・Yの10文字です。
+登録自動車用にAからM、軽自動車用にPからYが用意されています。
+学習データが思いからGitLFSを勉強して導入したい．
+
+area&num1の画像をヒストグラム方で分割する際の問題点
+・九州の「州」など文字に隙間があると，正しく分割できない．
+　→文字太くしたら解決した．（erode２回）
+
+=9/22時点===================================
+    ACCURACY------------------------------
+    accuracy of all | 23.0%
+    accuracy of area| 27.0%
+    accuracy of num1| 67.0%
+    accuracy of kana| 79.0%
+    accuracy of num2| 93.0%
+    TIME----------------------------------
+    average of all process time     | 1.1066
+    average of preprocessing time   | 0.0004
+    average of split time           | 0.0016
+    average of area time            | 0.2879
+    average of num1 time            | 0.3012
+    average of kana time            | 0.1033
+    average of num2 time            | 0.4122
+
+
+テスト画像を増やしたい．（今100枚）
+分割後の画像を出力するボタンを追加したい．
+
+OCRの精度10/12
+ACCURACY------------------------------
+accuracy of all | 1.0%
+accuracy of area| 27.0%
+accuracy of num1| 28.999999999999996%
+accuracy of kana| 37.0%
+accuracy of num2| 18.0%
+
+ラジオボタン？選択ボタン？を追加し，画像出力を選べるようにしたい．
+
+テスト画像を200枚に増やした．
+<10/12 中間発表前>
+OCR
+    ACCURACY------------------------------
+    accuracy of all | 1.5%
+    accuracy of area| 33.0%
+    accuracy of num1| 34.0%
+    accuracy of kana| 42.5%
+    accuracy of num2| 26.5%
+
+    TIME----------------------------------
+    average of all process time     | 0.5198
+    average of preprocessing time   | 0.0028
+    average of split time           | 0.0000    前処理として計測した
+    average of area time            | 0.1323
+    average of num1 time            | 0.1278
+    average of kana time            | 0.1273
+    average of num2 time            | 0.1296
+
+自作
+    ACCURACY------------------------------
+    accuracy of all | 23.0% (+21.5)
+    accuracy of area| 33.0% (± 0.0)
+    accuracy of num1| 69.0% (+35.0)
+    accuracy of kana| 83.5% (+41.0)
+    accuracy of num2| 94.5% (+68.0)
+
+    TIME----------------------------------
+    average of all process time     | 0.8535
+    average of preprocessing time   | 0.0003
+    average of split time           | 0.0022
+    average of area time            | 0.1306
+    average of num1 time            | 0.2604
+    average of kana time            | 0.0927
+    average of num2 time            | 0.3670
+
+データベースを並行して進める．
+    画像，時間，県，インデックス
+    横軸が県のグラフをつくれるように．日，週，月．
+    花回廊用だから鳥取県が多くなる．ー＞鳥取県と他の県を別でグラフ化する．

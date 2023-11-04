@@ -1,0 +1,55 @@
+<keras.src.callbacks.History object at 0x7f8d1f617310>
+<keras.src.callbacks.History object at 0x7f8d00133b50>
+<keras.src.callbacks.History object at 0x7f8ccb9d1e90>
+<keras.src.callbacks.History object at 0x7f8d08148750>
+<keras.src.callbacks.History object at 0x7f8d0017bdd0>
+<keras.src.callbacks.History object at 0x7f8c379a2f90>
+<keras.src.callbacks.History object at 0x7f8c372fc490>
+<keras.src.callbacks.History object at 0x7f8c36a41d10>
+<keras.src.callbacks.History object at 0x7f8ca1b62750>
+<keras.src.callbacks.History object at 0x7f8c2dbe0950>
+
+<keras.src.callbacks.History object at 0x7f449b831790>
+<keras.src.callbacks.History object at 0x7f4415bda190>
+<keras.src.callbacks.History object at 0x7f449b7b51d0>
+<keras.src.callbacks.History object at 0x7f43e85ded90>
+<keras.src.callbacks.History object at 0x7f438de697d0>
+<keras.src.callbacks.History object at 0x7f438d6da850>
+<keras.src.callbacks.History object at 0x7f438c9fb1d0>
+<keras.src.callbacks.History object at 0x7f4375da6cd0>
+<keras.src.callbacks.History object at 0x7f438ca99dd0>
+<keras.src.callbacks.History object at 0x7f43605d4990>
+
+<keras.src.callbacks.History object at 0x7f6f01160d10>
+<keras.src.callbacks.History object at 0x7f6edffef0d0>
+<keras.src.callbacks.History object at 0x7f6ea4b7c090>
+<keras.src.callbacks.History object at 0x7f6e7810ae50>
+<keras.src.callbacks.History object at 0x7f6e5195c090>
+<keras.src.callbacks.History object at 0x7f6e51124090>
+<keras.src.callbacks.History object at 0x7f6e507439d0>
+<keras.src.callbacks.History object at 0x7f6e4bd950d0>
+<keras.src.callbacks.History object at 0x7f6e4be66110>
+<keras.src.callbacks.History object at 0x7f6e382b82d0>
+
+<keras.src.callbacks.History object at 0x7f9e74ff9990>
+<keras.src.callbacks.History object at 0x7f9deb936410>
+<keras.src.callbacks.History object at 0x7f9dc1b1cd90>
+<keras.src.callbacks.History object at 0x7f9dd3ff3610>
+<keras.src.callbacks.History object at 0x7f9dc1b66890>
+<keras.src.callbacks.History object at 0x7f9d58bfe290>
+<keras.src.callbacks.History object at 0x7f9d5819eb50>
+<keras.src.callbacks.History object at 0x7f9d207d9d90>
+<keras.src.callbacks.History object at 0x7f9d881470d0>
+<keras.src.callbacks.History object at 0x7f9ce0740710>
+
+<keras.src.callbacks.History object at 0x7f3c652981d0>
+<keras.src.callbacks.History object at 0x7f3c0711b890>
+<keras.src.callbacks.History object at 0x7f3c1b9ec950>
+<keras.src.callbacks.History object at 0x7f3bdc1f2350>
+<keras.src.callbacks.History object at 0x7f3b815bcc90>
+<keras.src.callbacks.History object at 0x7f3ba81852d0>
+<keras.src.callbacks.History object at 0x7f3b804b0510>
+<keras.src.callbacks.History object at 0x7f3b79a07d50>
+<keras.src.callbacks.History object at 0x7f3b4c5c0290>
+<keras.src.callbacks.History object at 0x7f3b346ea0d0>
+
