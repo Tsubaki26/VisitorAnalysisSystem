@@ -14,6 +14,7 @@ import MyLibrary.split_histgram as his
 import MyLibrary.split_hough as hough
 import MyLibrary.rc_num as rc_num
 import MyLibrary.rc_kana as rc_kana
+import MyLibrary.rc_area as rc_area
 import MyLibrary.denoise as denoise
 # import MyLibrary.ocr as ocr
 from test_data import test_annotation as ta
@@ -66,11 +67,14 @@ def number_plate_recognize(img):
     area_start_time = time.time()
     # cv2.imshow("area",area_img)
     # cv2.waitKey()
-    result_area = ""
+    # result_area = ""
     # area = ocr.ocr(area_img)
     # for i in area[0]:
     #     result_area += i.content
-    results['area'] = result_area
+    # results['area'] = result_area
+    kernel = np.ones((2,2), np.uint8)
+    area_img = cv2.erode(area_img, kernel, iterations=2)
+    results['area'] = rc_area.rc_area(area_img)
     area_end_time = time.time()
     print(results['area'])
 

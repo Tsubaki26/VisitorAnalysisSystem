@@ -66,14 +66,16 @@ model.compile(
 history = model.fit(
         train_ds,
         batch_size=batch_size,
-        epochs=epochs
+        epochs=epochs,
+        validation_data=val_ds
     )
 
-model.save('./myModels/area_model(e)1.h5')
+model.save('./../myModels/area_model(e)1')
 # tf.saved_model.save(model, './myModels/area_model(e)1')
 
 
 train_loss, train_acc = model.evaluate(train_ds)
+print(train_loss, train_acc)
 # valn_loss, val_acc = model.evaluate(val_ds)
 
 plt.figure(figsize=(10,5))
@@ -88,4 +90,4 @@ plt.plot(history.history['val_loss'])
 plt.title('Model loss')
 plt.xlabel('epoch')
 
-plt.savefig('./training/kana_hist_b{}_e{}.jpg'.format(batch_size, epochs))
+plt.savefig('./kana_hist_b{}_e{}2.jpg'.format(batch_size, epochs))
