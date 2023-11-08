@@ -15,7 +15,7 @@ from recognition.NPrecognition_v3 import number_plate_recognize
 
 
 file_path_list = []
-files = glob.glob('./images/test_kei/*.jpg')
+files = glob.glob('./images/test_images/*.jpg')
 for i in natsort.natsorted(files):
     file_path_list.append(i)
 

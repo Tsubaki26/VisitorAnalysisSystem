@@ -90,4 +90,4 @@ plt.plot(history.history['val_loss'])
 plt.title('Model loss')
 plt.xlabel('epoch')
 
-plt.savefig('./kana_hist_b{}_e{}2.jpg'.format(batch_size, epochs))
+plt.savefig('./area_hist_b{}_e{}2.jpg'.format(batch_size, epochs))

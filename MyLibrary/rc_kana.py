@@ -1,9 +1,9 @@
 import tensorflow as tf
 import cv2
 import numpy as np
-from PIL import Image, ImageFont, ImageDraw
+from keras.applications.vgg16 import preprocess_input
 
-model = tf.keras.models.load_model("./myModels/kana_model1", compile=False)
+model = tf.keras.models.load_model("./myModels/kana_model(e)1", compile=False)
 # img = cv2.imread('./zero.jpg')
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 kana_list = ["あ","い","う","え","か","き","く","け","こ","さ","す","せ","そ",
@@ -13,6 +13,8 @@ kana_list = ["あ","い","う","え","か","き","く","け","こ","さ","す","
 def rc_kana(img):
     #img = 255 - img
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    img = cv2.resize(img, (54, 54))
+    img = preprocess_input(img)
     img = np.expand_dims(img, axis=0)
     # print(img.shape)
     probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])

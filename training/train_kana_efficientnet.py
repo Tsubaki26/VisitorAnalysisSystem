@@ -53,10 +53,10 @@ model.compile(
 
 
 # xとyを取得します。
-x_train_ds = list(train_ds.map(lambda x, y: x))
-y_train_ds = list(train_ds.map(lambda x, y: y))
-x_val_ds = list(val_ds.map(lambda x, y: x))
-y_val_ds = list(val_ds.map(lambda x, y: y))
+# x_train_ds = list(train_ds.map(lambda x, y: x))
+# y_train_ds = list(train_ds.map(lambda x, y: y))
+# x_val_ds = list(val_ds.map(lambda x, y: x))
+# y_val_ds = list(val_ds.map(lambda x, y: y))
 
 # history = model.fit(
 #     train_ds,
@@ -64,18 +64,19 @@ y_val_ds = list(val_ds.map(lambda x, y: y))
 #     epochs=epochs
 # )
 history = model.fit(
-        x_train_ds,
-        y_train_ds,
+        train_ds,
         batch_size=batch_size,
         epochs=epochs,
-        validation_data=(x_val_ds, y_val_ds)
+        validation_data=val_ds
     )
 
-model.save('./myModels/kana_model(e)1')
+model.save('../myModels/kana_model(e)2')
 
 
 train_loss, train_acc = model.evaluate(train_ds)
-valn_loss, val_acc = model.evaluate(val_ds)
+val_loss, val_acc = model.evaluate(val_ds)
+print(f"train_loss: {train_loss}, train_acc: {train_acc}")
+print(f"val_loss: {val_loss}, val_acc: {val_acc}")
 
 plt.figure(figsize=(10,5))
 plt.subplot(1,2,1)
@@ -89,4 +90,4 @@ plt.plot(history.history['val_loss'])
 plt.title('Model loss')
 plt.xlabel('epoch')
 
-plt.savefig('./training/kana_hist_b{}_e{}.jpg'.format(batch_size, epochs))
+plt.savefig('./kana_hist_b{}_e{}.jpg'.format(batch_size, epochs))

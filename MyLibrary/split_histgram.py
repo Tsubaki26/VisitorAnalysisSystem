@@ -82,6 +82,21 @@ def find_split_point_top(img, start_ratio, end_ratio):
 
     return histgram_col, left_min_index
 
+def find_split_point_number(img):
+    histgram_col = []
+    height = img.shape[0]
+    width = img.shape[1]
+
+    #列のヒストグラム
+    t_img = img.T
+    print(t_img.shape)
+    for i in range(width):
+        h = height - np.sum(t_img[i]) / 255
+        histgram_col.append(h)
+    draw_hist_1(img, histgram_col, 0)
+
+    return histgram_col
+
 def split(img, x1, y1, x2, y2):
     sp_img = img[y1:y2, x1:x2]
     #cv2.imshow("splited", sp_img)

@@ -55,7 +55,7 @@ def number_plate_recognize(img):
     area_num_img_erode = cv2.erode(area_num_img, kernel, iterations=2)
     c_hist, left_index = his.find_split_point_top(area_num_img_erode, 0.55, 0.65)
     #ヒストグラムを出力
-    his.draw_hist_1(area_num_img, c_hist, left_index)
+    #! his.draw_hist_1(area_num_img, c_hist, left_index)
     area_img = his.split(area_num_img, 0, 0, left_index, area_num_img.shape[0])
     num1_img = his.split(area_num_img, left_index+1, 0, area_num_img.shape[1], area_num_img.shape[0])
     original_num1_img = num1_img
@@ -65,13 +65,6 @@ def number_plate_recognize(img):
 
     #*地域の処理（未完成）
     area_start_time = time.time()
-    # cv2.imshow("area",area_img)
-    # cv2.waitKey()
-    # result_area = ""
-    # area = ocr.ocr(area_img)
-    # for i in area[0]:
-    #     result_area += i.content
-    # results['area'] = result_area
     kernel = np.ones((2,2), np.uint8)
     area_img = cv2.erode(area_img, kernel, iterations=2)
     results['area'] = rc_area.rc_area(area_img)
@@ -102,7 +95,7 @@ def number_plate_recognize(img):
     kernel = np.ones((2,2), np.uint8)
     kana_img = cv2.dilate(kana_img, kernel, iterations=2) #文字を細くする
     kana_img = denoise.denoise(kana_img, 0.3,0.8,0.2,0.8)
-    padding_side = int((kana_img.shape[0]+10-kana_img.shape[1])/2)
+    padding_side = int((kana_img.shape[0]+5-kana_img.shape[1])/2)
     #幅10の余白を追加
     kana_img = cv2.copyMakeBorder(kana_img,5,5,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
     kana_img=cv2.resize(kana_img, (54, 54))
@@ -119,6 +112,7 @@ def number_plate_recognize(img):
     original_num2_img = num2_img
     kernel = np.ones((2,2), np.uint8)
     num2_img = cv2.dilate(num2_img, kernel, iterations=2) #文字を細くする
+    # his.find_split_point_number(num2_img)
     sp_img_list = hough.split(num2_img)                      #ハフ変換により数字を分割
     #! hough.draw_images(sp_img_list, 'num2_split')                              #分割結果の表示
     result_num2 = ""

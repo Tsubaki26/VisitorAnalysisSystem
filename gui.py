@@ -142,7 +142,7 @@ class App(tk.Frame):
         cv2_img = np.array(pil_img, dtype=np.uint8)
         results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(cv2_img)
         self.area_label.config(text=f"地名\t\t| {results['area']}")
-        self.num1_label.config(text=f"分類番号\t\t| {results['num1']}a")
+        self.num1_label.config(text=f"分類番号\t\t| {results['num1']}")
         self.kana_label.config(text=f"ひらがな\t\t| {results['kana']}")
         self.num2_label.config(text=f"一連指定番号\t| {results['num2']}")
 
