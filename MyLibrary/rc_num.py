@@ -4,18 +4,18 @@ import numpy as np
 from keras.applications.vgg16 import preprocess_input
 import time
 
-model = tf.keras.models.load_model("./myModels/num_model(e)1", compile=False)
+model = tf.keras.models.load_model("./myModels/num_model(e)2", compile=False)
 print("load model")
 # img = cv2.imread('./zero.jpg')
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # @tf.function(reduce_retracing=True)
 def rc_num(img):
     print(type(img))
-    img = 255 - img
-    img = cv2.resize(img, (32,32))
+    # img = 255 - img
+    img = cv2.resize(img, (50,100))
     img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-    #cv2.imshow("",img)
-    #cv2.waitKey()
+    # cv2.imshow("",img)
+    cv2.waitKey()
     img = preprocess_input(img)
 
     img = np.expand_dims(img, axis=0)

@@ -120,6 +120,9 @@ def number_plate_recognize(img):
     for img in sp_img_list:
         # result_num2 = result_num2 + str(rc_num.rc_num(img))
         result, acc_result = rc_num.rc_num(img)
+        img = cv2.dilate(img, kernel, iterations=1)
+        # cv2.imshow("num2",img)
+        # cv2.waitKey()
         result_num2 = result_num2 + str(result)
         acc_result_list.append(np.max(acc_result))
     # result_num2 = rc_num.rc_num_list(sp_img_list)
