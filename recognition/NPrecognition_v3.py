@@ -44,8 +44,9 @@ def number_plate_recognize(img):
     #*ヒストグラム法による画像分割
     split_start_time = time.time()
     r_hist, c_hist, r_top_index, r_index, r_bottom_index, left_index, right_index = his.find_split_point(img)                        #分割位置の特定
+    print("aaaa", r_bottom_index)
     #ヒストグラムを出力
-    #! his.draw_hist_2(img, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left_index, right_index)                                #ヒストグラムの表示
+    #!his.draw_hist_2(img, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left_index, right_index)                                #ヒストグラムの表示
     kana_img = his.split(img, 0, r_index, left_index, r_bottom_index)                        #かなを切り抜く
     num2_img = his.split(img, left_index, r_index, img.shape[1], r_bottom_index)          #下数字を切り抜く
     area_num_img = his.split(original_img, left_index, r_top_index, right_index, r_index)                    #地域・上数字を切り抜く
@@ -81,6 +82,9 @@ def number_plate_recognize(img):
     result_num1 = ""
     acc_result_list = []
     for img in sp_img_list:
+        img = cv2.erode(img, kernel, iterations=1)
+        # cv2.imshow("num1",img)
+        # cv2.waitKey()
         result, acc_result = rc_num.rc_num(img)
         result_num1 += str(result)
         acc_result_list.append(np.max(acc_result))

@@ -7,8 +7,8 @@ from keras.applications.vgg16 import preprocess_input
 data_dir = pathlib.Path('./../images/num_images/')
 print(len(list(data_dir.glob('*/*.png'))))  #学習データ数
 
-img_height = 100
-img_width = 50
+img_height = 54
+img_width = 32
 batch_size = 64
 epochs = 10
 
@@ -58,7 +58,7 @@ history = model.fit(
         validation_data=val_ds
     )
 
-model.save('./../myModels/num_model(e)2')
+model.save('./../myModels/num_model(e)3')
 # tf.saved_model.save(model, './myModels/area_model(e)1')
 
 
@@ -78,4 +78,4 @@ plt.plot(history.history['val_loss'])
 plt.title('Model loss')
 plt.xlabel('epoch')
 
-plt.savefig('./area_hist_b{}_e{}2.jpg'.format(batch_size, epochs))
+plt.savefig('./num_hist_b{}_e{}2.jpg'.format(batch_size, epochs))

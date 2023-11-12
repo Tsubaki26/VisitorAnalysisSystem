@@ -32,7 +32,7 @@ def find_split_point(img):
             if h < row_min:
                 row_min = h
                 row_min_index = i
-        if i > 100:
+        if i > 100 and i < 115:
             if h < row_bottom_min:
                 row_bottom_min = h
                 row_bottom_min_index = i
