@@ -14,8 +14,14 @@ def rc_area(img):
     img = preprocess_input(img)
     img = np.expand_dims(img, axis=0)
     # print(img.shape)
-    probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
-    predictions = probability_model.predict(img)
+    # probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
+    # predictions = probability_model.predict(img)
+    """
+    https://www.tensorflow.org/api_docs/python/tf/keras/Model#predict  ↓
+    predictの処理はバッチ処理で行うので大量データの予測もできるけど、入力データが少ない場合はバッチ処理がボトルネックになる。
+    predictは時間がかかるから直接 model(x)で予測する．
+    """
+    predictions = model(img,training=False)
     # print(predictions)
     result = area_list[np.argmax(predictions)]
 

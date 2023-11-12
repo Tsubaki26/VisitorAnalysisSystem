@@ -17,8 +17,9 @@ def rc_kana(img):
     img = preprocess_input(img)
     img = np.expand_dims(img, axis=0)
     # print(img.shape)
-    probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
-    predictions = probability_model.predict(img)
+    # probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
+    # predictions = probability_model.predict(img)
+    predictions = model(img, training=False)
     #print(predictions)
 
     return kana_list[np.argmax(predictions)]
