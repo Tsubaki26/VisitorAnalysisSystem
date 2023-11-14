@@ -3,7 +3,8 @@ import pyocr
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-from test_data import test_annotation
+# from test_data import test_annotation as ta
+from test_data import test_annotation2 as ta
 import glob
 import natsort
 import difflib
@@ -15,7 +16,8 @@ from recognition.NPrecognition_v3 import number_plate_recognize
 
 
 file_path_list = []
-files = glob.glob('./images/test_images/*.jpg')
+# files = glob.glob('./images/test_images/*.jpg')
+files = glob.glob('./images/test_images_2/*.jpg')
 for i in natsort.natsorted(files):
     file_path_list.append(i)
 
@@ -51,41 +53,41 @@ for index, path in enumerate(file_path_list):
     num2 = 0
 
     #areaの正誤判定
-    if results['area'] == test_annotation.annotation[index][0]:
+    if results['area'] == ta.annotation[index][0]:
         correct_area += 1
         area = 1
         print("good!!!!!!!!!!!!!!!!!!")
     else:
         area = 0
         bad_area.append(index)
-        bad_area_pos.append("\n".join(difflib.ndiff(test_annotation.annotation[index][0], results["area"])))
+        bad_area_pos.append("\n".join(difflib.ndiff(ta.annotation[index][0], results["area"])))
     #num1の正誤判定
-    if results['num1'] == test_annotation.annotation[index][1]:
+    if results['num1'] == ta.annotation[index][1]:
         correct_num1 += 1
         num1 = 1
         print("good!!!!!!!!!!!!!!!!!!")
     else:
         num1 = 0
         bad_num1.append(index)
-        bad_num1_pos.append("\n".join(difflib.ndiff(test_annotation.annotation[index][1], results["num1"])))
+        bad_num1_pos.append("\n".join(difflib.ndiff(ta.annotation[index][1], results["num1"])))
     #kanaの正誤判定
-    if results['kana'] == test_annotation.annotation[index][2]:
+    if results['kana'] == ta.annotation[index][2]:
         correct_kana += 1
         kana = 1
         print("good!!!!!!!!!!!!!!!!!!")
     else:
         kana = 0
         bad_kana.append(index)
-        bad_kana_pos.append("\n".join(difflib.ndiff(test_annotation.annotation[index][2], results["kana"])))
+        bad_kana_pos.append("\n".join(difflib.ndiff(ta.annotation[index][2], results["kana"])))
     #num2の正誤判定
-    if results['num2'] == test_annotation.annotation[index][3]:
+    if results['num2'] == ta.annotation[index][3]:
         correct_num2 += 1
         num2 = 1
         print("good!!!!!!!!!!!!!!!!!!")
     else:
         num2 = 0
         bad_num2.append(index)
-        bad_num2_pos.append("\n".join(difflib.ndiff(test_annotation.annotation[index][3], results["num2"])))
+        bad_num2_pos.append("\n".join(difflib.ndiff(ta.annotation[index][3], results["num2"])))
     if area * num1 * kana * num2:
         correct_all += 1
 
