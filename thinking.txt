@@ -123,3 +123,35 @@ OCR
     画像，時間，県，インデックス
     横軸が県のグラフをつくれるように．日，週，月．
     花回廊用だから鳥取県が多くなる．ー＞鳥取県と他の県を別でグラフ化する．
+
+<< 中国地方限定でテスト >>
+WithOCR
+    ACCURACY------------------------------
+    accuracy of all | 5.0%
+    accuracy of area| 25.0%
+    accuracy of num1| 70.0%
+    accuracy of kana| 90.0%
+    accuracy of num2| 65.0%
+    TIME----------------------------------
+    average of all process time     | 1.0546
+    average of preprocessing time   | 0.0004
+    average of split time           | 0.1392
+    average of area time            | 0.3003
+    average of num1 time            | 0.2384
+    average of kana time            | 0.0887
+    average of num2 time            | 0.2876
+EfficientNet
+    ACCURACY------------------------------
+    accuracy of all | 60.0%
+    accuracy of area| 75.0%
+    accuracy of num1| 70.0%
+    accuracy of kana| 90.0%
+    accuracy of num2| 90.0%
+    TIME----------------------------------
+    average of all process time     | 0.7238
+    average of preprocessing time   | 0.0009
+    average of split time           | 0.0056
+    average of area time            | 0.1517
+    average of num1 time            | 0.1944
+    average of kana time            | 0.0758
+    average of num2 time            | 0.2953
