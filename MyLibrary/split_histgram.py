@@ -19,8 +19,8 @@ def find_split_point(img):
     row_top_min_index = 0   #最小値のインデックス
     row_min = 100       #最小値の初期化
     row_min_index = 0   #最小値のインデックス
-    row_bottom_min = 100       #最小値の初期化
-    row_bottom_min_index = 0   #最小値のインデックス
+    row_bottom_min = 30       #最小値の初期化
+    row_bottom_min_index = height   #最小値のインデックス
     for i in range(height):
         h = width - np.sum(img[i]) / 255
         histgram_row.append(h)
@@ -29,7 +29,7 @@ def find_split_point(img):
                 row_top_min = h
                 row_top_min_index = i
         if i > 30 and i < 60:
-            if h < row_min:
+            if h <= row_min:
                 row_min = h
                 row_min_index = i
         if i > 100 and i < 115:
@@ -41,6 +41,8 @@ def find_split_point(img):
     #列のヒストグラム
     t_img = img.T
     print(t_img.shape)
+    left_min1 = 100       #最小値の初期化
+    left_min1_index = 0   #最小値のインデックス
     left_min = 100       #最小値の初期化
     left_min_index = 0   #最小値のインデックス
     right_min = 100       #最小値の初期化
@@ -48,6 +50,10 @@ def find_split_point(img):
     for i in range(width):
         h = height - np.sum(t_img[i]) / 255
         histgram_col.append(h)
+        if i > 0 and i < 20:
+            if h < left_min1:
+                left_min1 = h
+                left_min1_index = i
         if i > 40 and i < 70:
             if h < left_min:
                 left_min = h
@@ -59,7 +65,7 @@ def find_split_point(img):
     print("x split position: ", left_min_index)
 
     return histgram_row, histgram_col, row_top_min_index, row_min_index, row_bottom_min_index,\
-        left_min_index, right_min_index
+        left_min1_index, left_min_index, right_min_index
 
 def find_split_point_top(img, start_ratio, end_ratio):
     histgram_col = []
@@ -107,7 +113,7 @@ def split(img, x1, y1, x2, y2):
     return sp_img
 
 def draw_hist_2(img, histgram_row, histgram_col, row_top_min_index, row_min_index, row_bottom_min_index,\
-    left_min_index, right_min_index):
+    left1_min_index, left_min_index, right_min_index):
     height = img.shape[0]
     width = img.shape[1]
 
@@ -116,6 +122,7 @@ def draw_hist_2(img, histgram_row, histgram_col, row_top_min_index, row_min_inde
     cv2.line(img, (0,row_bottom_min_index),(width,row_bottom_min_index), color=(0,0,255))
     cv2.line(img, (left_min_index,0),(left_min_index,height), color=(0,0,255))
     cv2.line(img, (right_min_index,0),(right_min_index,row_min_index), color=(0,0,255))
+    cv2.line(img, (left1_min_index,row_min_index),(left1_min_index,height), color=(0,0,255))
 
     rcParams['axes.xmargin'] = 0
     rcParams['axes.ymargin'] = 0

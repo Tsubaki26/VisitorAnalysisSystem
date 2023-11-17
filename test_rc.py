@@ -1,5 +1,4 @@
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance
-import pyocr
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,7 +11,8 @@ import time
 
 #自作ライブラリ
 # from recognition.NPrecognition_v3 import number_plate_recognize
-from recognition.NPrecognition_v3 import number_plate_recognize
+# from recognition.NPrecognition_v3 import number_plate_recognize
+from recognition import NPrecognition_v3 as npr
 
 
 file_path_list = []
@@ -44,9 +44,20 @@ num2_time       = 0
 
 print(file_path_list)
 for index, path in enumerate(file_path_list):
+    # if index != 17:
+    #     continue
     print(str(index) + "/" + str(len(file_path_list)))
-    img = cv2.imread(path)
-    results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = number_plate_recognize(img)
+    # img = cv2.imread(path)
+    pil_img = Image.open(path)
+    cv2_img = np.array(pil_img, dtype=np.uint8)
+    img = cv2.resize(cv2_img, (500, 250))
+    # pil_img = Image.open(path)
+    # cv2_img = np.array(pil_img, dtype=np.uint8)
+    # results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = number_plate_recognize(cv2_img)
+    # cv2.imshow("",img)
+    # cv2.waitKey()
+    print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {img.shape}")
+    results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(img)
     area = 0
     num1 = 0
     kana = 0
@@ -87,6 +98,7 @@ for index, path in enumerate(file_path_list):
     else:
         num2 = 0
         bad_num2.append(index)
+        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',results["num2"])
         bad_num2_pos.append("\n".join(difflib.ndiff(ta.annotation[index][3], results["num2"])))
     if area * num1 * kana * num2:
         correct_all += 1
@@ -118,26 +130,25 @@ print("average of num1 time\t\t| {:.4f}".format(num1_time / len(file_path_list))
 print("average of kana time\t\t| {:.4f}".format(kana_time / len(file_path_list)))
 print("average of num2 time\t\t| {:.4f}".format(num2_time / len(file_path_list)))
 
-"""
+
 print("BAD RECOGNITION INDEX-----------------")
 print("areaを誤認識した画像: {}".format(bad_area))
-for i in bad_area_pos:
-    print("==============")
-    print(i)
-"""
+# for i in bad_area_pos:
+#     print("==============")
+#     print(i)
+
 print("num1を誤認識した画像: {}".format(bad_num1))
 
-"""
-for i in bad_num1_pos:
-    print("==============")
-    print(i)
+
+# for i in bad_num1_pos:
+#     print("==============")
+#     print(i)
 print("kanaを誤認識した画像: {}".format(bad_kana))
-for i in bad_kana_pos:
-    print("==============")
-    print(i)
-"""
+# for i in bad_kana_pos:
+#     print("==============")
+#     print(i)
+
 print("num2を誤認識した画像: {}".format(bad_num2))
-"""for i in bad_num2_pos:
-    print("==============")
-    print(i)
-"""
+# for i in bad_num2_pos:
+#     print("==============")
+#     print(i)

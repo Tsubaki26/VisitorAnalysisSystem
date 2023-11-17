@@ -38,27 +38,36 @@ def number_plate_recognize(img):
     img_width = 240
     img_height = 120
     pre_start_time = time.time()
-    img, original_img = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
+    original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
     pre_end_time = time.time()
+    # cv2.imshow("",original_img)
+    # cv2.waitKey()
 
     #*ヒストグラム法による画像分割
     split_start_time = time.time()
-    r_hist, c_hist, r_top_index, r_index, r_bottom_index, left_index, right_index = his.find_split_point(img)                        #分割位置の特定
+    r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index = his.find_split_point(img_erode)                        #分割位置の特定
     print("aaaa", r_bottom_index)
     #ヒストグラムを出力
-    #!his.draw_hist_2(img, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left_index, right_index)                                #ヒストグラムの表示
-    kana_img = his.split(img, 0, r_index, left_index, r_bottom_index)                        #かなを切り抜く
-    num2_img = his.split(img, left_index, r_index, img.shape[1], r_bottom_index)          #下数字を切り抜く
+    his.draw_hist_2(img_th, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index)                                #ヒストグラムの表示
+    kana_img = his.split(original_img, left1_index, r_index, left_index, r_bottom_index)                        #かなを切り抜く
+    num2_img = his.split(original_img, left_index, r_index, img.shape[1], r_bottom_index)          #下数字を切り抜く
     area_num_img = his.split(original_img, left_index, r_top_index, right_index, r_index)                    #地域・上数字を切り抜く
     # cv2.imshow("area&num1",area_num_img)
     # cv2.waitKey()
+    # cv2.imshow("",num2_img)
+    # cv2.waitKey()
     kernel = np.ones((2,2), np.uint8)
-    area_num_img_erode = cv2.erode(area_num_img, kernel, iterations=2)
+    area_num_img_th = cv2.adaptiveThreshold(area_num_img,
+                                        255,
+                                        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                        cv2.THRESH_BINARY,
+                                        31, 30)
+    area_num_img_erode = cv2.erode(area_num_img_th, kernel, iterations=2)
     c_hist, left_index = his.find_split_point_top(area_num_img_erode, 0.55, 0.65)
     #ヒストグラムを出力
     #! his.draw_hist_1(area_num_img, c_hist, left_index)
     area_img = his.split(area_num_img, 0, 0, left_index, area_num_img.shape[0])
-    num1_img = his.split(area_num_img, left_index+1, 0, area_num_img.shape[1], area_num_img.shape[0])
+    num1_img = his.split(area_num_img_th, left_index+1, 0, area_num_img.shape[1], area_num_img.shape[0])
     original_num1_img = num1_img
     cv2.imwrite('./images/output_images/num1.jpg', original_num1_img)
     split_end_time = time.time()
@@ -68,6 +77,7 @@ def number_plate_recognize(img):
     area_start_time = time.time()
     kernel = np.ones((2,2), np.uint8)
     area_img = cv2.erode(area_img, kernel, iterations=2)
+    area_img = cv2.cvtColor(area_img, cv2.COLOR_GRAY2BGR)
     results['area'] = rc_area.rc_area(area_img)
     area_end_time = time.time()
     print(results['area'])
@@ -78,11 +88,14 @@ def number_plate_recognize(img):
     # cv2.imshow("num1",num1_img)
     # cv2.waitKey()
     sp_img_list = hough.split(num1_img)                      #ハフ変換により数字を分割
-    #! hough.draw_images(sp_img_list, 'num1_split')                              #分割結果の表示
+    hough.draw_images(sp_img_list, 'num1_split')                              #分割結果の表示
     result_num1 = ""
     acc_result_list = []
     for img in sp_img_list:
-        img = cv2.erode(img, kernel, iterations=1)
+        # cv2.imshow("", img)
+        # cv2.waitKey()
+        # img = cv2.erode(img, kernel, iterations=1)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         # cv2.imshow("num1",img)
         # cv2.waitKey()
         result, acc_result = rc_num.rc_num(img)
@@ -96,15 +109,23 @@ def number_plate_recognize(img):
     kana_start_time = time.time()
     # cv2.imshow("",kana_img)
     # cv2.waitKey()
-    kernel = np.ones((2,2), np.uint8)
-    kana_img = cv2.dilate(kana_img, kernel, iterations=2) #文字を細くする
-    kana_img = denoise.denoise(kana_img, 0.3,0.8,0.2,0.8)
-    padding_side = int((kana_img.shape[0]+5-kana_img.shape[1])/2)
+    # kernel = np.ones((2,2), np.uint8)
+    # kana_img = cv2.dilate(kana_img, kernel, iterations=2) #文字を細くする
+    # kana_img = denoise.denoise(kana_img, 0.3,0.8,0.2,0.8)
+    kana_img = cv2.adaptiveThreshold(kana_img,
+                                255,
+                                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                cv2.THRESH_BINARY,
+                                31, 30)
     #幅10の余白を追加
-    kana_img = cv2.copyMakeBorder(kana_img,5,5,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
-    kana_img=cv2.resize(kana_img, (54, 54))
+    padding_side = int((kana_img.shape[0]-kana_img.shape[1])/2)
+    kana_img = cv2.copyMakeBorder(kana_img,0,0,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
+    # cv2.imshow("",kana_img)
+    # cv2.waitKey()
+    # kana_img=cv2.resize(kana_img, (54, 54))
     # cv2.imshow("denoised", kana_img)
     # cv2.waitKey()
+    kana_img = cv2.cvtColor(kana_img, cv2.COLOR_GRAY2BGR)
     results['kana'] = rc_kana.rc_kana(kana_img)
     kana_end_time = time.time()
     print(results['kana'])
@@ -114,22 +135,35 @@ def number_plate_recognize(img):
     # cv2.waitKey()
     num2_start_time = time.time()
     original_num2_img = num2_img
-    kernel = np.ones((2,2), np.uint8)
-    num2_img = cv2.dilate(num2_img, kernel, iterations=2) #文字を細くする
+    num2_img = cv2.adaptiveThreshold(num2_img,
+                                255,
+                                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                cv2.THRESH_BINARY,
+                                71, 30)
+    # kernel = np.ones((2,2), np.uint8)
+    # num2_img = cv2.dilate(num2_img, kernel, iterations=2) #文字を細くする
     # his.find_split_point_number(num2_img)
+    # cv2.imshow("",num2_img)
+    # cv2.waitKey()
     sp_img_list = hough.split(num2_img)                      #ハフ変換により数字を分割
     #! hough.draw_images(sp_img_list, 'num2_split')                              #分割結果の表示
     result_num2 = ""
     acc_result_list = []
+    print("list len", len(sp_img_list))
     for img in sp_img_list:
         # result_num2 = result_num2 + str(rc_num.rc_num(img))
+        # img = cv2.dilate(img, kernel, iterations=1)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        # cv2.imshow("", img)
+        # cv2.waitKey()
         result, acc_result = rc_num.rc_num(img)
-        img = cv2.dilate(img, kernel, iterations=1)
         # cv2.imshow("num2",img)
         # cv2.waitKey()
+        print("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ")
         result_num2 = result_num2 + str(result)
         acc_result_list.append(np.max(acc_result))
     # result_num2 = rc_num.rc_num_list(sp_img_list)
+    print("kekkaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",result_num2)
     #出力の修正
     if len(result_num2) == 4:
         temp = ''
@@ -151,7 +185,7 @@ def number_plate_recognize(img):
     #画像を出力
     cv2.imwrite('./images/output_images/area&num1.jpg', area_num_img)
     cv2.imwrite('./images/output_images/kana.jpg', kana_img)
-    cv2.imwrite('./images/output_images/num2.jpg', original_num2_img)
+    cv2.imwrite('./images/output_images/num2.jpg', num2_img)
     cv2.imwrite('./images/output_images/area.jpg', area_img)
     # cv2.imwrite('./output_images/num1.jpg', original_num1_img)
 
@@ -171,11 +205,11 @@ def number_plate_recognize(img):
     ans_kana = ta.annotation[img_index][2]
     ans_num2 = ta.annotation[img_index][3]
 
-    print("\n=================================")
-    print(f"|result\t\t|answer\t\t|")
-    print(f"| {results['area']} {results['num1']}\t| {ans_area} {ans_num1}\t|")
-    print(f"| {results['kana']} {results['num2']}\t| {ans_kana} {ans_num2}\t|")
-    print("=================================")
+    print("\n=================")
+    print(f"|result\t|")
+    print(f"| {results['area']} {results['num1']}\t|")
+    print(f"| {results['kana']} {results['num2']}\t|")
+    print("===================")
     print(f"preprocess time\t\t| {pre_time:.4f}s")
     print(f"histgram split time\t| {split_time:.4f}s")
     print(f"area recognition time\t| {area_time:.4f}s")

@@ -32,7 +32,7 @@ def split(img):
             y2 = line[0][3]
             line = (x1, y1, x2, y2)
             line_list.append(line)
-    #line_list.append((img.shape[1],img.shape[0], img.shape[1], 0))
+    line_list.append((img.shape[1],img.shape[0], img.shape[1], 0))
     if isLine:
         line_list.sort(key=itemgetter(0, 1, 2, 3))
         # cv2.imshow(" ", lineadd_img)

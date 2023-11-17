@@ -140,6 +140,7 @@ class App(tk.Frame):
 
     def recognize(self, pil_img):
         cv2_img = np.array(pil_img, dtype=np.uint8)
+        print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {cv2_img.shape}")
         results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(cv2_img)
         self.area_label.config(text=f"地名\t\t| {results['area']}")
         self.num1_label.config(text=f"分類番号\t\t| {results['num1']}")

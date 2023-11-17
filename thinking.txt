@@ -143,8 +143,8 @@ WithOCR
 EfficientNet
     ACCURACY------------------------------
     accuracy of all | 60.0%
-    accuracy of area| 75.0%
-    accuracy of num1| 70.0%
+    accuracy of area| 75.0%	＋10％はしたい
+    accuracy of num1| 70.0%	＋10％はしたい
     accuracy of kana| 90.0%
     accuracy of num2| 90.0%
     TIME----------------------------------
@@ -155,3 +155,8 @@ EfficientNet
     average of num1 time            | 0.1944
     average of kana time            | 0.0758
     average of num2 time            | 0.2953
+
+ソフトマックスによりそれぞれの確率が出てくる．
+→最大確率を予測結果としているが，そこに閾値を設定して閾値を越えていない場合は分類不能として出力する．
+北九州，近畿（大阪，兵庫）
+交差検証
