@@ -38,6 +38,7 @@ def preprocessing(img, img_width, img_height):
         if black_pixel_count_horizontal[i] >= threshold_h:
             img_th[i, :] = 255
             img_erode[i, :] = 255
+    img_erode = cv2.erode(img_erode, kernel, iterations=1)
     # for i in range(img_height):
     #     if black_pixel_count_vertical[i] >= threshold_v:
     #         img_th[:, i] = 255
