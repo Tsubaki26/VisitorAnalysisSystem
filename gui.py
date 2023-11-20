@@ -5,6 +5,7 @@ import numpy as np
 from tkinter import filedialog
 from PIL import Image, ImageTk
 from PIL.ExifTags import TAGS
+import cv2
 
 # from recognition.NPrecognition_v3 import number_plate_recognize
 from recognition import NPrecognition_v3 as npr
@@ -140,6 +141,7 @@ class App(tk.Frame):
 
     def recognize(self, pil_img):
         cv2_img = np.array(pil_img, dtype=np.uint8)
+        cv2_img = cv2.resize(cv2_img, (500, 200))
         print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {cv2_img.shape}")
         results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(cv2_img)
         self.area_label.config(text=f"地名\t\t| {results['area']}")

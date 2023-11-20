@@ -48,7 +48,7 @@ def number_plate_recognize(img):
     r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index = his.find_split_point(img_erode)                        #分割位置の特定
     print("aaaa", r_bottom_index)
     #ヒストグラムを出力
-    his.draw_hist_2(img_th, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index)                                #ヒストグラムの表示
+    his.draw_hist_2(img_erode, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index)                                #ヒストグラムの表示
     kana_img = his.split(original_img, left1_index, r_index, left_index, r_bottom_index)                        #かなを切り抜く
     num2_img = his.split(original_img, left_index, r_index, img.shape[1], r_bottom_index)          #下数字を切り抜く
     area_num_img = his.split(original_img, left_index, r_top_index, right_index, r_index)                    #地域・上数字を切り抜く
@@ -63,7 +63,7 @@ def number_plate_recognize(img):
                                         cv2.THRESH_BINARY,
                                         31, 30)
     area_num_img_erode = cv2.erode(area_num_img_th, kernel, iterations=2)
-    c_hist, left_index = his.find_split_point_top(area_num_img_erode, 0.55, 0.65)
+    c_hist, left_index = his.find_split_point_top(area_num_img_erode, 0.50, 0.65)
     #ヒストグラムを出力
     #! his.draw_hist_1(area_num_img, c_hist, left_index)
     area_img = his.split(area_num_img, 0, 0, left_index, area_num_img.shape[0])
@@ -111,12 +111,28 @@ def number_plate_recognize(img):
     # cv2.waitKey()
     # kernel = np.ones((2,2), np.uint8)
     # kana_img = cv2.dilate(kana_img, kernel, iterations=2) #文字を細くする
-    # kana_img = denoise.denoise(kana_img, 0.3,0.8,0.2,0.8)
     kana_img = cv2.adaptiveThreshold(kana_img,
                                 255,
                                 cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                 cv2.THRESH_BINARY,
                                 31, 30)
+    # kana_img = denoise.denoise(kana_img, 0.3,0.8,0.2,0.8)
+    # img_erode = cv2.erode(img_th, kernel, iterations=2)
+    # 水平方向の黒ピクセル数を計算
+    black_pixel_count_horizontal = np.sum(kana_img == 0, axis=1)
+    # 垂直方向の黒ピクセル数を計算
+    black_pixel_count_vertical = np.sum(kana_img==0, axis=0)
+    # 画像幅の8割以上の行が黒ピクセル数であれば白で染める
+    threshold_h = int(0.8 * img_width)
+    threshold_v = int(1 * img_height)
+    kana_img_h = kana_img.shape[0]
+    kana_img_w = kana_img.shape[1]
+    for i in range(kana_img_h):
+        if black_pixel_count_horizontal[i] >= threshold_h:
+            kana_img[i, :] = 255
+    for i in range(kana_img_w):
+        if black_pixel_count_vertical[i] >= threshold_v:
+            kana_img[:, i] = 255
     #幅10の余白を追加
     padding_side = int((kana_img.shape[0]-kana_img.shape[1])/2)
     kana_img = cv2.copyMakeBorder(kana_img,0,0,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
@@ -146,7 +162,7 @@ def number_plate_recognize(img):
     # cv2.imshow("",num2_img)
     # cv2.waitKey()
     sp_img_list = hough.split(num2_img)                      #ハフ変換により数字を分割
-    #! hough.draw_images(sp_img_list, 'num2_split')                              #分割結果の表示
+    hough.draw_images(sp_img_list, 'num2_split')                              #分割結果の表示
     result_num2 = ""
     acc_result_list = []
     print("list len", len(sp_img_list))

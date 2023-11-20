@@ -52,8 +52,8 @@ def split(img):
                     sp_img = original_img[1:, x1+1:x2]
                     sum_sp_img = np.sum(sp_img)
                     #if judge_x1 < img.shape[1] * 0.95:
-                        #黒の割合が1割以下のもの（ハイフンとかノイズ）はスキップ
-                    if sum_sp_img < sp_img.shape[0] * sp_img.shape[1] * 255 * 0.85:
+                        #黒の割合が2割以下のもの（ハイフンとかノイズ）はスキップ
+                    if sum_sp_img < sp_img.shape[0] * sp_img.shape[1] * 255 * 0.80:
                         if x1 < img.shape[1] * 0.9:
                             #幅10の余白を追加
                             sp_img = cv2.copyMakeBorder(sp_img,5,5,10,10,cv2.BORDER_CONSTANT,value=[255,255,255])

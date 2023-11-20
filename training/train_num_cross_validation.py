@@ -17,7 +17,7 @@ img_width = 32
 random_seed = 123
 validation_split = 0.2
 
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 EPOCH = 10
 b = np.array([0,1,3,4])
 for i in b:
@@ -114,6 +114,8 @@ for train_size in train_sizes:
     # for i in generator:
     #     print(i)
     for fold, (train_indices, val_indices) in enumerate(generator):
+        print(train_indices.tolist())
+        print(val_indices.tolist())
         x_train, x_val = img_X_train_split[train_indices.tolist()], img_X_train_split[val_indices.tolist()]
         y_train, y_val = img_Y_train_split[train_indices.tolist()], img_Y_train_split[val_indices.tolist()]
         rlr = ReduceLROnPlateau(monitor='val_loss',

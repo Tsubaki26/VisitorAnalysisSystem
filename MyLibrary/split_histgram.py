@@ -19,13 +19,13 @@ def find_split_point(img):
     row_top_min_index = 0   #最小値のインデックス
     row_min = 100       #最小値の初期化
     row_min_index = 0   #最小値のインデックス
-    row_bottom_min = 30       #最小値の初期化
+    row_bottom_min = 50       #最小値の初期化
     row_bottom_min_index = height   #最小値のインデックス
     for i in range(height):
         h = width - np.sum(img[i]) / 255
         histgram_row.append(h)
         if i > 0 and i < 20:
-            if h < row_top_min:
+            if h <= row_top_min:
                 row_top_min = h
                 row_top_min_index = i
         if i > 30 and i < 60:
@@ -81,7 +81,7 @@ def find_split_point_top(img, start_ratio, end_ratio):
         h = height - np.sum(t_img[i]) / 255
         histgram_col.append(h)
         if i > width*start_ratio and i < width*end_ratio:
-            if h < left_min:
+            if h <= left_min:
                 left_min = h
                 left_min_index = i
     print("x split position: ", left_min_index)

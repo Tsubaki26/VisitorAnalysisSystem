@@ -49,14 +49,14 @@ for index, path in enumerate(file_path_list):
     print(str(index) + "/" + str(len(file_path_list)))
     # img = cv2.imread(path)
     pil_img = Image.open(path)
-    cv2_img = np.array(pil_img, dtype=np.uint8)
-    img = cv2.resize(cv2_img, (500, 250))
+    img = np.array(pil_img, dtype=np.uint8)
+    img = cv2.resize(img, (500, 200))
     # pil_img = Image.open(path)
     # cv2_img = np.array(pil_img, dtype=np.uint8)
     # results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = number_plate_recognize(cv2_img)
     # cv2.imshow("",img)
     # cv2.waitKey()
-    print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {img.shape}")
+    # print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {img.shape}")
     results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(img)
     area = 0
     num1 = 0

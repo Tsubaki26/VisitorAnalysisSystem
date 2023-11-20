@@ -44,14 +44,14 @@ def rc_area(img):
     print('=================================')
     EPS = 0.1
     # if max - max_2nd < EPS:
-    if max < 0.7:
+    # if max < 0.7:
         # kernel = np.ones((2,2), np.uint8)
         # img = cv2.erode(img, kernel, iterations=1)
-        img = cv2.GaussianBlur(img, (3,3),-1)
+        # img = cv2.GaussianBlur(img, (3,3),-1)
         #もう一度認識
-        return rc_area(img)
-    else:
-        return result
+        # return rc_area(img)
+    # else:
+    return result
 
 if __name__ == '__main__':
     image = cv2.imread('./../images/test_195.jpg')
