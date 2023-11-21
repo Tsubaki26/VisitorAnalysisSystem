@@ -1,6 +1,7 @@
 import tensorflow as tf
 import pathlib
 import matplotlib.pyplot as plt
+from tensorflow import keras
 from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.vgg16 import preprocess_input
 from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping
@@ -8,6 +9,12 @@ from sklearn.model_selection import KFold, train_test_split
 from sklearn.metrics import mean_absolute_error
 import numpy as np
 import pandas as pd
+
+gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+if len(gpu_devices) > 0:
+    for i in range(len(gpu_devices)):
+        tf.config.experimental.set_memory_growth(gpu_devices[i], True)
+        print('memory growth:',tf.config.experimental.get_memory_growth(gpu_devices[i]))
 
 data_dir = pathlib.Path('./../images/num_images/')
 print(len(list(data_dir.glob('*/*.png'))))  #学習データ数
@@ -167,6 +174,7 @@ for train_size in train_sizes:
         # val_loss_scores.append(val_score_mae)
 
         models.append(model)
+        keras.backend.clear_session()
 
     #テストデータでの精度
     test_accs = []
