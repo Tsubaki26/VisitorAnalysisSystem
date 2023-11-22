@@ -70,7 +70,7 @@ history = model.fit(
         validation_data=val_ds
     )
 
-model.save('../myModels/kana_model(e)2')
+model.save('../myModels/kana_model(e)3')
 
 
 train_loss, train_acc = model.evaluate(train_ds)
