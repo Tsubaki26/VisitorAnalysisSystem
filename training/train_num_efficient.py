@@ -2,7 +2,8 @@ import tensorflow as tf
 from keras.datasets import mnist
 import numpy as np
 import matplotlib.pyplot as plt
-from keras.applications import EfficientNetB0
+# from keras.applications import EfficientNetB0
+from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.vgg16 import preprocess_input
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()    #約55MB
@@ -58,7 +59,7 @@ y_train_split = y_train[:-int(y_train.shape[0] * val_ratio)]
 #*モデルの定義
 num_classes = 10
 
-base_model = EfficientNetB0(input_shape=(img_width,img_height,3), weights='imagenet', include_top=False)
+base_model = EfficientNetV2B0(input_shape=(img_width,img_height,3), weights='imagenet', include_top=False)
 x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
 output = tf.keras.layers.Dense(num_classes, activation='softmax')(x)
 model = tf.keras.models.Model(inputs=[base_model.input], outputs=[output])

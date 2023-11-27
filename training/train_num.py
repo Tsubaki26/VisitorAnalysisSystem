@@ -2,6 +2,7 @@ import tensorflow as tf
 import pathlib
 import matplotlib.pyplot as plt
 from keras.applications.efficientnet_v2 import EfficientNetV2B0
+from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping
 from keras.applications.vgg16 import preprocess_input
 
 data_dir = pathlib.Path('./../images/num_images/')
@@ -14,7 +15,7 @@ epochs = 10
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
-    validation_split=0.2,
+    validation_split=0.3,
     subset="training",
     seed=123,
     image_size=(img_height,img_width),
@@ -23,13 +24,14 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
-    validation_split=0.2,
+    validation_split=0.3,
     subset="validation",
     seed=123,
     image_size=(img_height,img_width),
     batch_size=batch_size
 )
-
+# val_ds = val_ds.take(2*len(val_ds) // 3)
+# test_ds = val_ds.skip(2*len(val_ds) // 3)
 # 画像データを前処理します。
 class_names = train_ds.class_names
 print(class_names)
@@ -50,7 +52,6 @@ model.compile(
     metrics=['accuracy']
 )
 
-
 history = model.fit(
         train_ds,
         batch_size=batch_size,
@@ -58,13 +59,17 @@ history = model.fit(
         validation_data=val_ds
     )
 
-model.save('./../myModels/num_model(e)3')
+model.save('./../myModels/num_model(e)4')
 # tf.saved_model.save(model, './myModels/area_model(e)1')
 
 
 train_loss, train_acc = model.evaluate(train_ds)
-print(train_loss, train_acc)
-# valn_loss, val_acc = model.evaluate(val_ds)
+val_loss, val_acc = model.evaluate(val_ds)
+# test_loss, test_acc = model.evaluate(test_ds)
+print(f"train_loss: {train_loss}, train_acc: {train_acc}")
+print(f"val_loss: {val_loss}, val_acc: {val_acc}")
+# print(f"test_loss: {test_loss}, test_acc: {test_acc}")
+
 
 plt.figure(figsize=(10,5))
 plt.subplot(1,2,1)

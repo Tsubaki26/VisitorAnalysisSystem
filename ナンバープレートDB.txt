@@ -1,0 +1,34 @@
+ナンバープレートDB
+　｜来場者ID　INT (PK)｜地名 VARCHAR()｜分類番号 VARCHAR()｜平仮名 VARCHAR()｜一連指定番号 VARCHAR()｜
+
+入退出管理DB
+　｜来場者ID INT (FK)｜日付 DATE｜入場時間 TIME｜退場時間 TIME｜
+
+
+MySQL command:
+
+	create database データベース名;
+	create database visitordb
+	show databases;
+
+SQL文:
+	create table 'テーブル名'( , , );
+		 create table license_plate (license_plate_ID int auto_increment not null primary key, area varchar(20), classification_number varchar(5), kana varchar(2), serial_number varchar(10), image_path varchar(100));
+		create table access (license_plate_ID int, date varchar(20), enter_time time, leave_time time, foreign key fk_number_plate_ID (license_plate_ID) references license_plate(license_plate_ID));
+	insert into 'テーブル名' values( , , );
+		insert into license_plate values (1, 'tottori', '500', 'a', '12-34', './test/images/a.png');
+
+mysqld -> MySQLの起動
+#ERROR 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (10061)　が表示されたら．．．
+#管理者権限でPowerShellを実行し，「net start MySQL80」を実行．
+
+mysql -u root -p  -> MySQLへ接続（password入力）
+
+mysqladmin -u root -p shutdown -> MySQLの停止
+
+mysqlを起動しておかないとPythonから接続できない
+
+mysql> quit; ->閉じる
+
+columnの変更 -> alter構文
+

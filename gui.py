@@ -6,9 +6,14 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 from PIL.ExifTags import TAGS
 import cv2
+import os
+import datetime
+import pathlib
+import time
 
 # from recognition.NPrecognition_v3 import number_plate_recognize
 from recognition import NPrecognition_v3 as npr
+from MyLibrary import control_db as db
 
 class App(tk.Frame):
     def __init__(self,root):
@@ -30,7 +35,8 @@ class App(tk.Frame):
 
         self.root.update()
         self.create_widget()
-        
+        self.db_controller = db.DB_controller()
+
         self.root.bind('<Configure>', self.on_window_configure)
 
     #ウィジェット等の作成
@@ -63,10 +69,10 @@ class App(tk.Frame):
         self.info_frame = tk.Frame(self.img_frame, relief=tk.GROOVE, bg=self.main_color, bd=2)
         self.info_frame.pack(side=tk.TOP, padx=10, pady=(0,10), fill=tk.X)
         self.info_label = tk.Label(self.info_frame, text='ー画像情報ー', bg=self.main_color,
-                                   fg='white', font=("meiryo",10))
-        self.date_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",10))
-        self.width_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",10))
-        self.height_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",10))
+                                   fg='white', font=("meiryo",13))
+        self.date_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",13))
+        self.width_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",13))
+        self.height_label = tk.Label(self.info_frame, bg=self.main_color, fg='white', font=("meiryo",13))
         self.info_label.pack(side=tk.TOP, pady=5)
         self.date_label.pack(side=tk.TOP, anchor=tk.W, padx=10)
         self.width_label.pack(side=tk.TOP, anchor=tk.W, padx=10)
@@ -88,26 +94,25 @@ class App(tk.Frame):
         self.analysis_frame.propagate(False)
         self.analysis_frame.pack(side=tk.RIGHT, anchor=tk.NW,expand=True,fill=tk.BOTH,padx=(2,10),pady=10)
         self.analysis_label = tk.Label(self.analysis_frame, text='ー認識結果ー', bg=self.main_color,
-                                       fg='white', font=("meiryo",10))
+                                       fg='white', font=("meiryo",13))
         self.analysis_label.pack(side=tk.TOP, pady=5)
         self.result_frame = tk.Frame(self.analysis_frame, relief='groove', bg=self.main_color, bd=2)
         self.result_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
-        self.area_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",10))
-        self.num1_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",10))
-        self.kana_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",10))
-        self.num2_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",10))
+        self.area_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",13))
+        self.num1_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",13))
+        self.kana_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",13))
+        self.num2_label = tk.Label(self.result_frame, bg=self.main_color, fg='white', font=("meiryo",13))
         self.area_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
         self.num1_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
         self.kana_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
         self.num2_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
-
     #ファイルの選択
     def menu_file_open_click(self, event=None):
         filename = filedialog.askopenfilename(
             title = "ファイルを開く",
             initialdir = "./" # 自分自身のディレクトリ
             )
-        print(filename)
+        self.img_path = filename
         if len(filename) == 0:
             self.console_message('ファイルの選択がキャンセルされました．\n')
         else:
@@ -116,7 +121,9 @@ class App(tk.Frame):
 
     def console_message(self, text):
         self.console.config(state='normal')
-        self.console.insert(f'{self.console_pos}.0', f'> {text}')
+        now_time = datetime.datetime.now()
+        now_time = now_time.strftime('%Y-%m-%d %H:%M:%S')
+        self.console.insert(f'{self.console_pos}.0', f'{now_time}> {text}')
         self.console.config(state='disabled')
         self.console.see('end')
         self.console_pos += 1
@@ -142,29 +149,38 @@ class App(tk.Frame):
     def recognize(self, pil_img):
         cv2_img = np.array(pil_img, dtype=np.uint8)
         cv2_img = cv2.resize(cv2_img, (500, 200))
-        print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {cv2_img.shape}")
-        results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(cv2_img)
-        self.area_label.config(text=f"地名\t\t| {results['area']}")
+        results, processing_times = npr.number_plate_recognize(cv2_img)
+        #データベースに格納
+        self.db_controller.insert_db(results, self.img_path, self.dt)
+        self.console_message("データベースに格納しました．")
+
+        self.area_label.config(text=f"地名\t\t| {results['area'][0]}({results['area'][1]:.2f}%)")
         self.num1_label.config(text=f"分類番号\t\t| {results['num1']}")
         self.kana_label.config(text=f"ひらがな\t\t| {results['kana']}")
         self.num2_label.config(text=f"一連指定番号\t| {results['num2']}")
 
-        self.console_message(f'前処理時間: {p_time:.4f} [s]\n')
-        self.console_message(f'画像分割時間: {s_time:.4f} [s]\n')
-        self.console_message(f'認識時間_地名: {a_time:.4f} [s]\n')
-        self.console_message(f'認識時間_分類番号: {n1_time:.4f} [s]\n')
-        self.console_message(f'認識時間_ひらがな: {k_time:.4f} [s]\n')
-        self.console_message(f'認識時間_一連指定番号: {n2_time:.4f} [s]\n')
-        self.console_message(f'総処理時間: {pros_time:.4f} [s]\n')
+        self.console_message(f"前処理時間: {processing_times['pre_time']:.4f} [s]\n")
+        self.console_message(f"画像分割時間: {processing_times['split_time']:.4f} [s]\n")
+        self.console_message(f"認識時間_地名: {processing_times['area_time']:.4f} [s]\n")
+        self.console_message(f"認識時間_分類番号: {processing_times['num1_time']:.4f} [s]\n")
+        self.console_message(f"認識時間_ひらがな: {processing_times['kana_time']:.4f} [s]\n")
+        self.console_message(f"認識時間_一連指定番号: {processing_times['num2_time']:.4f} [s]\n")
+        self.console_message(f"総処理時間: {processing_times['process_time']:.4f} [s]\n")
+
 
     #画像情報を取得し，表示する
     def get_info(self, img):
         exif_dict = img._getexif()
         date = '不明'
-        if exif_dict:
-            for id, value in exif_dict.items():
-                if TAGS.get(id, id) == "DateTimeOriginal":
-                    date = value
+        p = pathlib.Path(self.img_path)
+        time = p.stat().st_ctime
+        self.dt = datetime.datetime.fromtimestamp(time)
+        #ex. 2023-11-12 23:11:03.900627
+        self.console_message(f'{self.dt}\n')
+        # if exif_dict:
+        #     for id, value in exif_dict.items():
+        #         if TAGS.get(id, id) == "DateTimeOriginal":
+        #             date = value
         width = img.width
         height = img.height
         self.date_label.config(text=f'撮影日\t| {date}')
@@ -178,16 +194,17 @@ class App(tk.Frame):
         self.canvas_height = self.canvas.winfo_height()
         width = 0
         height = 0
-        print(abs(self.pil_img_width-self.canvas_width))
-        print(abs(self.pil_img_height-self.canvas_height))
-        if self.pil_img_width-self.canvas_width > self.pil_img_height-self.canvas_height:
+        old_width = self.pil_img_width
+        old_height= self.pil_img_height
+        if old_width-self.canvas_width > old_height-self.canvas_height:
             width = self.canvas_width
-            height = int(self.pil_img_height*(self.canvas_width/self.pil_img_width))
+            height = int(old_height*(self.canvas_width/old_width))
             img = img.resize((width, height))
         else:
-            width = int(self.pil_img_width*(self.canvas_height/self.pil_img_height))
+            width = int(old_width*(self.canvas_height/old_height))
             height = self.canvas_height
             img = img.resize((width, height))
+        self.console_message(f'画像サイズを変更 --> ({width},{height})\n')
         # self.canvas.config(width=width, height=height)
         return img
 

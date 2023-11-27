@@ -56,7 +56,7 @@ def split(img):
                     if sum_sp_img < sp_img.shape[0] * sp_img.shape[1] * 255 * 0.80:
                         if x1 < img.shape[1] * 0.9:
                             #幅10の余白を追加
-                            sp_img = cv2.copyMakeBorder(sp_img,5,5,10,10,cv2.BORDER_CONSTANT,value=[255,255,255])
+                            sp_img = cv2.copyMakeBorder(sp_img,2,2,5,5,cv2.BORDER_CONSTANT,value=[255,255,255])
                             sp_img_list.append(sp_img)
                     #print(sp_img)
                     # cv2.imshow("", sp_img)

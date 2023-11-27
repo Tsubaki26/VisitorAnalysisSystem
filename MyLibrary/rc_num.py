@@ -10,7 +10,7 @@ print("load model")
 # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # @tf.function(reduce_retracing=True)
 def rc_num(img):
-    print(type(img))
+    # print(type(img))
     # img = 255 - img
     img = cv2.resize(img, (32,54))
     # img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
@@ -26,7 +26,7 @@ def rc_num(img):
     predictions = model(img_expand, training=False)
     # print(predictions)
     end = time.time()
-    print(end-start, "s")
+    # print(end-start, "s")
 
     #信頼度について，最大と２番目を調べる．
     max, max_2nd = 0, 0

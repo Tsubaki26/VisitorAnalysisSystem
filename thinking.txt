@@ -163,3 +163,65 @@ EfficientNet
 
 平仮名ー＞左側，下側に線を加えた学習データ追加
 数字　ー＞下側に線を加えた学習データを追加
+
+EfficientNetV1をmodel.saveすると「TypeError: Unable to serialize [2.0896919 2.1128857 2.1081853] to JSON. Unrecognized type <class 'tensorflow.python.framework.ops.EagerTensor'>.」というエラーが出てくる．
+ー＞EfficientNetV2を使用．
+
+<<中国地方限定>>
+11/23
+ACCURACY------------------------------
+accuracy of all | 65.0%
+accuracy of area| 95.0%
+accuracy of num1| 80.0%
+accuracy of kana| 95.0%
+accuracy of num2| 95.0%
+TIME----------------------------------
+average of all process time     | 1.0641
+average of preprocessing time   | 0.0007
+average of split time           | 0.0049
+average of area time            | 0.2204
+average of num1 time            | 0.3194
+average of kana time            | 0.1175
+average of num2 time            | 0.4012
+
+11/28に報告書(?)を提出することになった．
+
+ToDo(11/27)=================
+ご当地ナンバーの影響調査．
+メモリが足りない問題の原因追及
+*DBに格納するシステムの実装．
+DB内のデータをグラフ化．
+　時間ごとの来場者数
+　鳥取県限定
+　その他の県の分布
+　日間，週間，月間，年間の分布
+*画像保存フォルダを作成し，認識するたびに画像保存＆DBにパスを格納
+GUIの調整
+　*認識結果のフォントサイズを調整
+　　*今のサイズは小さすぎるかも
+　*認識の信頼度（%）を表示
+　　*分類できない県は信頼度が低くなっているか確認
+　　　誤認識の中にも信頼度が高いものもあった
+
+　↓とりあえずいらないかな　
+　DBに格納するかを選択するボタンを設置
+　　テスト利用の時は格納したくないから
+　
+　↓とりあえずいらないかな
+　画像の分割状況の画像や切り取った画像などを表示させるボタンを作成．
+　　ヒストグラム
+　　　2つまとめた画像がいい
+　　地名
+　　分類番号(分割後)
+　　平仮名
+　　一連指定番号(分割後)
+
+================================
+
+ToDo(11/28)===================
+結果をPowerPointにまとめる
+学習曲線をまとめる．
+
+==============================
+
+自作モジュールには__init__.pyをフォルダ内に入れておかないとVScodeにモジュールとして認識されない．

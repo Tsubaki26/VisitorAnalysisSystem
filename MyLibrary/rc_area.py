@@ -25,9 +25,13 @@ def rc_area(img):
     # print(predictions)
     result = area_list[np.argmax(predictions)]
 
+    #信頼度
+    confidence = np.max(predictions) * 100
+
     #信頼度について，最大と２番目を調べる．
     max, max_2nd = 0, 0
     max_index, max_2nd_index = 0, 0
+    '''
     # print(predictions)
     for index, pr in enumerate(predictions[0]): #predictions: (1,42)
         if pr > max:
@@ -42,7 +46,8 @@ def rc_area(img):
     print(f'{area_list[max_index]}, {max}')
     print(f'{area_list[max_2nd_index]}, {max_2nd}')
     print('=================================')
-    EPS = 0.1
+    '''
+    # EPS = 0.1
     # if max - max_2nd < EPS:
     # if max < 0.7:
         # kernel = np.ones((2,2), np.uint8)
@@ -51,7 +56,7 @@ def rc_area(img):
         #もう一度認識
         # return rc_area(img)
     # else:
-    return result
+    return result, confidence
 
 if __name__ == '__main__':
     image = cv2.imread('./../images/test_195.jpg')

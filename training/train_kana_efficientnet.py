@@ -1,7 +1,8 @@
 import tensorflow as tf
 import pathlib
 import matplotlib.pyplot as plt
-from keras.applications import EfficientNetB0
+# from keras.applications import EfficientNetB0
+from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.vgg16 import preprocess_input
 
 data_dir = pathlib.Path('./../images/kana_images')
@@ -10,11 +11,11 @@ print(len(list(data_dir.glob('*/*.png'))))  #学習データ数
 img_height = 54
 img_width = 54
 batch_size = 64
-epochs = 10
+epochs = 20
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
-    validation_split=0.2,
+    validation_split=0.3,
     subset="training",
     seed=123,
     image_size=(img_height,img_width),
@@ -23,12 +24,15 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
-    validation_split=0.2,
+    validation_split=0.3,
     subset="validation",
     seed=123,
     image_size=(img_height,img_width),
     batch_size=batch_size
 )
+test_ds = val_ds.take(2*len(val_ds) // 3)
+val_ds = val_ds.skip(2*len(val_ds) // 3)
+
 # train_ds = preprocess_input(train_ds)
 # val_ds = preprocess_input(val_ds)
 # 画像データを前処理します。
@@ -40,7 +44,7 @@ val_ds = val_ds.map(lambda x, y: (preprocess_input(x), y))
 
 kana_classes = len(class_names)
 
-base_model = EfficientNetB0(input_shape=(img_width,img_height,3), weights='imagenet', include_top=False)
+base_model = EfficientNetV2B0(input_shape=(img_width,img_height,3), weights='imagenet', include_top=False)
 x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
 output = tf.keras.layers.Dense(kana_classes, activation='softmax')(x)
 model = tf.keras.models.Model(inputs=[base_model.input], outputs=[output])
@@ -75,8 +79,10 @@ model.save('../myModels/kana_model(e)3')
 
 train_loss, train_acc = model.evaluate(train_ds)
 val_loss, val_acc = model.evaluate(val_ds)
+test_loss, test_acc = model.evaluate(test_ds)
 print(f"train_loss: {train_loss}, train_acc: {train_acc}")
 print(f"val_loss: {val_loss}, val_acc: {val_acc}")
+print(f"test_loss: {test_loss}, test_acc: {test_acc}")
 
 plt.figure(figsize=(10,5))
 plt.subplot(1,2,1)

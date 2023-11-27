@@ -1,7 +1,8 @@
 import tensorflow as tf
 import pathlib
 import matplotlib.pyplot as plt
-from keras.applications import EfficientNetB0
+# from keras.applications import EfficientNetB0
+from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.vgg16 import preprocess_input
 
 data_dir = pathlib.Path('./../images/area_images/')
@@ -39,7 +40,7 @@ val_ds = val_ds.map(lambda x, y: (preprocess_input(x), y))
 
 kana_classes = len(class_names)
 
-base_model = EfficientNetB0(input_shape=(img_height,img_width,3), weights='imagenet', include_top=False)
+base_model = EfficientNetV2B0(input_shape=(img_height,img_width,3), weights='imagenet', include_top=False)
 x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
 output = tf.keras.layers.Dense(kana_classes, activation='softmax')(x)
 model = tf.keras.models.Model(inputs=[base_model.input], outputs=[output])

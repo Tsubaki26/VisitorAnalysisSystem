@@ -57,7 +57,7 @@ for index, path in enumerate(file_path_list):
     # cv2.imshow("",img)
     # cv2.waitKey()
     # print(f"SHEPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE, {img.shape}")
-    results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = npr.number_plate_recognize(img)
+    results, processing_times = npr.number_plate_recognize(img)
     area = 0
     num1 = 0
     kana = 0
@@ -103,15 +103,15 @@ for index, path in enumerate(file_path_list):
     if area * num1 * kana * num2:
         correct_all += 1
 
-    pre_time += p_time
-    split_time += s_time
-    area_time += a_time
-    num1_time += n1_time
-    kana_time += k_time
-    num2_time += n2_time
-    process_time += pros_time
+    pre_time += processing_times['pre_time']
+    split_time += processing_times['split_time']
+    area_time += processing_times['area_time']
+    num1_time += processing_times['num1_time']
+    kana_time += processing_times['kana_time']
+    num2_time += processing_times['num2_time']
+    process_time += processing_times['pros_time']
     print("==============")
-    print("処理時間｜{} s".format(pros_time))
+    print("処理時間｜{} s".format(processing_times['pros_time']))
     print("==============")
 
 print("ACCURACY------------------------------")
