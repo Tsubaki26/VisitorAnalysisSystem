@@ -8,7 +8,7 @@
 MySQL command:
 
 	create database データベース名;
-	create database visitordb
+	create database visitordb;
 	show databases;
 
 SQL文:

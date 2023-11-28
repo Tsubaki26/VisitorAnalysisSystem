@@ -64,14 +64,14 @@ for index, path in enumerate(file_path_list):
     num2 = 0
 
     #areaの正誤判定
-    if results['area'] == ta.annotation[index][0]:
+    if results['area'][0] == ta.annotation[index][0]:
         correct_area += 1
         area = 1
         print("good!!!!!!!!!!!!!!!!!!")
     else:
         area = 0
         bad_area.append(index)
-        bad_area_pos.append("\n".join(difflib.ndiff(ta.annotation[index][0], results["area"])))
+        bad_area_pos.append("\n".join(difflib.ndiff(ta.annotation[index][0], results["area"][0])))
     #num1の正誤判定
     if results['num1'] == ta.annotation[index][1]:
         correct_num1 += 1
@@ -109,9 +109,9 @@ for index, path in enumerate(file_path_list):
     num1_time += processing_times['num1_time']
     kana_time += processing_times['kana_time']
     num2_time += processing_times['num2_time']
-    process_time += processing_times['pros_time']
+    process_time += processing_times['process_time']
     print("==============")
-    print("処理時間｜{} s".format(processing_times['pros_time']))
+    print("処理時間｜{} s".format(processing_times['process_time']))
     print("==============")
 
 print("ACCURACY------------------------------")
