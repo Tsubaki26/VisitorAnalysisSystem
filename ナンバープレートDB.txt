@@ -18,6 +18,10 @@ SQL文:
 	insert into 'テーブル名' values( , , );
 		insert into license_plate values (1, 'tottori', '500', 'a', '12-34', './test/images/a.png');
 
+
+データベースの削除
+drop database データベース名
+
 mysqld -> MySQLの起動
 #ERROR 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (10061)　が表示されたら．．．
 #管理者権限でPowerShellを実行し，「net start MySQL80」を実行．
@@ -32,3 +36,28 @@ mysql> quit; ->閉じる
 
 columnの変更 -> alter構文
 
+
+
+
+<<NEW>>
+create database visitordb;
+create table area (area_id int not null primary key, area_name varchar(20));
+create table license_plate (license_plate_id int auto_increment not null primary key, area_id int not null, class_number varchar(5), kana varchar(2), serial_number varchar(10), image_path_1 varchar(200), image_path_2 varchar(200), foreign key fk_area_id (area_id) references area(area_id));
+create table access (access_id int auto_increment not null primary key, license_plate_id int, date varchar(20), enter_time time, leave_time time, foreign key fk_number_plate_id (license_plate_id) references license_plate(license_plate_id));
+
+<<NEW>>
+create database visitordb;
+create table area (area_id int not null primary key, area_name varchar(20));
+create table license_plate (license_plate_id int auto_increment not null primary key, area_id int not null, class_number varchar(5), kana varchar(2), serial_number varchar(10), image_path_1 varchar(200), image_path_2 varchar(200), foreign key fk_area_id (area_id) references area(area_id));
+create table access (access_id int auto_increment not null primary key, license_plate_id int, year int not null, month int not null, day int not null, enter_time time, leave_time time, foreign key fk_number_plate_id (license_plate_id) references license_plate(license_plate_id));
+
+*area insert
+insert into area values(1, 'other');
+insert into area values(2, '広島');
+insert into area values(3, '福山');
+insert into area values(4, '鳥取');
+insert into area values(5, '島根');
+insert into area values(6, '岡山');
+insert into area values(7, '倉敷');
+insert into area values(8, '山口');
+insert into area values(9, '下関');

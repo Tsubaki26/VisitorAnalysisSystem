@@ -32,6 +32,7 @@ class App(tk.Frame):
         self.console_pos = 1
 
         self.video_path = None
+        self.sub_win = None
 
         self.root.update()
         self.create_widget()
@@ -106,6 +107,12 @@ class App(tk.Frame):
         self.num1_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
         self.kana_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
         self.num2_label.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=3)
+        self.graph_frame = tk.Frame(self.analysis_frame, relief='groove', bg=self.main_color)
+        self.graph_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
+        self.graph_button = tk.Button(self.graph_frame, text='来場者の分布を表示',
+                                      command = self.graph_window, bg='#44464D',
+                                      font=("meiryo",10), fg='white', padx=10)
+        self.graph_button.pack(side=tk.TOP, padx=10, pady=5)
     #ファイルの選択
     def menu_file_open_click(self, event=None):
         filename = filedialog.askopenfilename(
@@ -136,9 +143,7 @@ class App(tk.Frame):
         self.canvas_height = self.canvas.winfo_height()
         self.pil_img = Image.open(img_path)
         self.get_info(self.pil_img)
-        self.pil_img_width = self.pil_img.width
-        self.pil_img_height = self.pil_img.height
-        self.pil_img = self.resize_img(self.pil_img)
+        self.pil_img = self.resize_img(self.canvas, self.pil_img)
         self.tk_pil_img = ImageTk.PhotoImage(image=self.pil_img)
         self.canvas_image = self.canvas.create_image(int(self.canvas_width/2),int(self.canvas_height/2),image=self.tk_pil_img)
         self.root.update()
@@ -188,34 +193,97 @@ class App(tk.Frame):
         self.height_label.config(text=f'高さ\t| {height}px')
 
     #画像をキャンバスサイズにリサイズ
-    def resize_img(self,img):
+    def resize_img(self,canvas,img):
         self.root.update()
-        self.canvas_width = self.canvas.winfo_width()
-        self.canvas_height = self.canvas.winfo_height()
+        canvas_width = canvas.winfo_width()
+        canvas_height = canvas.winfo_height()
         width = 0
         height = 0
-        old_width = self.pil_img_width
-        old_height= self.pil_img_height
-        if old_width-self.canvas_width > old_height-self.canvas_height:
-            width = self.canvas_width
-            height = int(old_height*(self.canvas_width/old_width))
+        pil_img_width = img.width
+        pil_img_height = img.height
+        old_width = pil_img_width
+        old_height= pil_img_height
+        if old_width-canvas_width > old_height-canvas_height:
+            width = canvas_width
+            height = int(old_height*(canvas_width/old_width))
             img = img.resize((width, height))
         else:
-            width = int(old_width*(self.canvas_height/old_height))
-            height = self.canvas_height
+            width = int(old_width*(canvas_height/old_height))
+            height = canvas_height
             img = img.resize((width, height))
         self.console_message(f'画像サイズを変更 --> ({width},{height})\n')
         # self.canvas.config(width=width, height=height)
         return img
+    
+    def graph_window(self):
+        #グラフ生成
+
+        def show_selected(event):
+            print(self.graph_combobox.get())
+            text_var.set(self.graph_combobox.get() + '別グラフ')
+
+        def window_configure(event):
+            window_height = self.sub_win.winfo_height()
+            self.graph_canvas.config(width=int(window_height*0.7), height=int(window_height*0.7))
+
+
+        if self.sub_win == None or not self.sub_win.winfo_exists():
+
+            self.db_controller.generate_daily_graph()
+            self.sub_win = tk.Toplevel()
+            self.sub_win.geometry("1000x700")
+            self.sub_win.minsize(1000,700)
+            self.sub_win.title("グラフウィンドウ")
+            self.sub_win.config(bg=self.main_color)
+
+            item_list = ['日','月','年']
+            text_var = tk.StringVar()
+            text_var.set(item_list[0] + '別グラフ')
+
+            label_sub = tk.Label(self.sub_win, textvariable=text_var, font=("meiryo",15), bg=self.main_color, fg='white')
+            label_sub.pack(side=tk.TOP)
+            self.graph_combobox = ttk.Combobox(self.sub_win, values=item_list, state='readonly')
+            self.graph_combobox.pack(side=tk.TOP)
+            self.graph_combobox.bind('<<ComboboxSelected>>', show_selected)
+            self.sub_win.update()
+            window_height = self.sub_win.winfo_height()
+            print(window_height)
+            self.graph_canvas = tk.Canvas(self.sub_win, width=int(window_height*0.7), height=int(window_height*0.7),
+                                highlightbackground='gray', highlightthickness=2, bg=self.sub_color)
+            self.graph_canvas.pack(side=tk.TOP, fill=tk.X, expand=True, padx=10,pady=10)
+            self.graph_canvas.propagate(False)
+            control_frame = tk.Frame(self.sub_win, relief='groove', bg=self.main_color)
+            control_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
+            back_button = tk.Button(control_frame, text='<< 戻る',
+                                        command = self.graph_window, bg='#44464D',
+                                        font=("meiryo",10), fg='white', padx=10)
+            back_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=5)
+            forward_button = tk.Button(control_frame, text='進む >>',
+                                        command = self.graph_window, bg='#44464D',
+                                        font=("meiryo",10), fg='white', padx=10)
+            forward_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=5)
+
+            self.sub_win.bind('<Configure>', window_configure)
+
+            #グラフ表示
+            self.sub_win.update()
+            graph_image = Image.open('./images/output_images/daily_bar_graph.png')
+            canvas_width = self.graph_canvas.winfo_width()
+            canvas_height = self.graph_canvas.winfo_height()
+            graph_image = self.resize_img(self.graph_canvas, graph_image)
+            # graph_image = graph_image.resize((canvas_width, canvas_height))
+            self.tk_graph_image = ImageTk.PhotoImage(image=graph_image)
+            self.canvas_graph_image = self.graph_canvas.create_image(int(canvas_width/2),int(canvas_height/2),image=self.tk_graph_image)
+            self.sub_win.update()
 
     def on_window_configure(self, event):
         self.window_width = root.winfo_width()
         self.canvas.config(width=int(self.window_width/2), height=int(self.window_width/4))
 
     def upadate_img(self):
-        self.pil_img = self.resize_img(self.pil_img)
+        self.pil_img = self.resize_img(self.canvas, self.pil_img)
         self.tk_pil_img = ImageTk.PhotoImage(image=self.pil_img)
-        self.canvas_image = self.canvas.create_image(int(self.canvas_width/2),int(self.canvas_height/2),image=self.tk_pil_img)
+        self.canvas_image = self.canvas.create_image(image=self.tk_pil_img)
 
     def run(self):
         self.root.mainloop()

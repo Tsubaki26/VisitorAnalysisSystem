@@ -1,4 +1,9 @@
 import mysql.connector
+import datetime
+import matplotlib.pyplot as plt
+
+area_threthold = 0.9
+plt.rcParams['font.family'] = 'MS Gothic'
 
 class DB_controller():
     def __init__(self):
@@ -13,50 +18,149 @@ class DB_controller():
     #データベースに格納
     def insert_db(self,results,path,dt):
         area = results['area'][0]
+        area_accuracy = results['area'][1]
         num1 = results['num1']
         kana = results['kana']
         num2 = results['num2']
-        
+
+        if area_accuracy < area_threthold:
+            area = 'other'
+
         # date = dt.split(' ')[0]
         # time = dt.split(' ')[1].split('.')[0]
         date = str(dt.date())
+        year, month, day = date.split('-')
+        year, month, day = int(year), int(month), int(day)
         time = dt.time()
         #ex. 2023-11-12 23:11:03.900627
-        self.cursor.execute('select license_plate_ID from license_plate where area="{}" and classification_number="{}" \
-            and kana="{}" and serial_number="{}"'.format(area,num1,kana,num2))
+
+        #地名IDを取得
+        self.cursor.execute('select area_id from area where area_name="{}"'.format(area))
+        a = self.cursor.fetchall()
+        for row in a:
+            area_id = row[0]
+        self.cursor.execute('select license_plate_id from license_plate, area where license_plate.area_id={} and class_number="{}" \
+            and kana="{}" and serial_number="{}"'.format(area_id,num1,kana,num2))
         a = self.cursor.fetchall()
         print(a)
         if a != []:
             print("aaa")
             for row in a:
-                license_plate_ID = row[0]
-            print(license_plate_ID)
-            self.cursor.execute('select leave_time from access where license_plate_ID={}'.format(license_plate_ID))
+                license_plate_id = row[0]
+            print(license_plate_id)
+            self.cursor.execute('select leave_time from access where license_plate_id={}'.format(license_plate_id))
             a = self.cursor.fetchall()
             print(a)
             if a[0][0] == None:
-                self.cursor.execute('update access set leave_time="{}" where license_plate_ID={}'.format(time,license_plate_ID))
+                self.cursor.execute('update access set leave_time="{}" where license_plate_id={}'.format(time,license_plate_id))
+                self.cursor.execute('update license_plate set image_path_2="{}" where license_plate_id={}'.format(path,license_plate_id))
             else:
                 print("kakunou")
-                self.cursor.execute('insert into license_plate(area,classification_number,kana,serial_number,image_path)\
-                    value("{}","{}","{}","{}","{}")'.format(area,num1,kana,num2,path))
-                license_plate_ID = self.cursor.lastrowid
-                self.cursor.execute('insert into access(license_plate_ID, date, enter_time)\
-                    value({},"{}","{}")'.format(license_plate_ID,date,time))
+                self.cursor.execute('insert into license_plate(area_id,class_number,kana,serial_number,image_path_1)\
+                    value("{}","{}","{}","{}","{}")'.format(area_id,num1,kana,num2,path))
+                license_plate_id = self.cursor.lastrowid
+                self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time)\
+                    value({},{},{},{},"{}")'.format(license_plate_id,year,month,day,time))
         else:
             print("kakunou")
-            self.cursor.execute('insert into license_plate(area,classification_number,kana,serial_number,image_path)\
-                value("{}","{}","{}","{}","{}")'.format(area,num1,kana,num2,path))
-            license_plate_ID = self.cursor.lastrowid
-            self.cursor.execute('insert into access(license_plate_ID, date, enter_time)\
-                value({},"{}","{}")'.format(license_plate_ID,date,time))
-        
+            self.cursor.execute('insert into license_plate(area_id,class_number,kana,serial_number,image_path_1)\
+                value("{}","{}","{}","{}","{}")'.format(area_id,num1,kana,num2,path))
+            license_plate_id = self.cursor.lastrowid
+            self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time)\
+                value({},{},{},{},"{}")'.format(license_plate_id,year,month,day,time))
+
         self.conn.commit()
 
     def show_db(self):
         self.cursor.execute('select * from license_plate')
         for row in self.cursor.fetchall():
             print(row)
+
+    def generate_daily_graph(self):
+        #今日の日付を取得
+        now_time = datetime.datetime.now()
+        year = now_time.year
+        month = now_time.month
+        day = now_time.day
+
+        year = 2023
+        month = 11
+        day = 21
+        #地名リストを作成
+        area_list = {}
+        self.cursor.execute('select area_name from area')
+        for row in self.cursor.fetchall():
+            area = row[0]
+            area_list[area] = 0
+
+        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and access.day={} and\
+            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month, day))
+        for row in self.cursor.fetchall():
+            area_name = row[0]
+            print(area_name)
+            area_list[area_name] += 1
+        # print(area_list)
+
+        x = [1,2,3,4,5,6,7,8,9]
+        plt.xlabel('地名')
+        plt.ylabel('台数')
+        plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.savefig('./images/output_images/daily_bar_graph.png')
+        # plt.show()
+
+    def generate_monthly_graph(self):
+        now_time = datetime.datetime.now()
+        year = now_time.year
+        month = now_time.month
+        year = 2023
+        month = 11
+        #地名リストを作成
+        area_list = {}
+        self.cursor.execute('select area_name from area')
+        for row in self.cursor.fetchall():
+            area = row[0]
+            area_list[area] = 0
+
+        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and\
+            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month))
+        for row in self.cursor.fetchall():
+            area_name = row[0]
+            print(area_name)
+            area_list[area_name] += 1
+        # print(area_list)
+
+        x = [1,2,3,4,5,6,7,8,9]
+        plt.xlabel('地名')
+        plt.ylabel('台数')
+        plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.savefig('./images/output_images/monthly_bar_graph.png')
+        # plt.show()
+
+    def generate_yearly_graph(self):
+        now_time = datetime.datetime.now()
+        year = now_time.year
+        year = 2023
+        #地名リストを作成
+        area_list = {}
+        self.cursor.execute('select area_name from area')
+        for row in self.cursor.fetchall():
+            area = row[0]
+            area_list[area] = 0
+
+        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and\
+            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year))
+        for row in self.cursor.fetchall():
+            area_name = row[0]
+            print(area_name)
+            area_list[area_name] += 1
+        # print(area_list)
+
+        x = [1,2,3,4,5,6,7,8,9]
+        plt.xlabel('地名')
+        plt.ylabel('台数')
+        plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.savefig('./images/output_images/yearly_bar_graph.png')
+        # plt.show()
 
 if __name__ == '__main__':
     db_controller = DB_controller()
