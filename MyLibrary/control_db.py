@@ -76,91 +76,127 @@ class DB_controller():
         for row in self.cursor.fetchall():
             print(row)
 
-    def generate_daily_graph(self):
-        #今日の日付を取得
-        now_time = datetime.datetime.now()
-        year = now_time.year
-        month = now_time.month
-        day = now_time.day
-
-        year = 2023
-        month = 11
-        day = 21
+    def generate_daily_graph(self, include_tottori, year, month, day):
+        # year = 2023
+        # month = 11
+        # day = 12
         #地名リストを作成
         area_list = {}
-        self.cursor.execute('select area_name from area')
-        for row in self.cursor.fetchall():
-            area = row[0]
-            area_list[area] = 0
+        if include_tottori:
+            self.cursor.execute('select area_name from area')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
 
-        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and access.day={} and\
-            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month, day))
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and access.day={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month, day))
+        else:
+            self.cursor.execute('select area_name from area where area_name != "鳥取"')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
+
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and access.day={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id and\
+                area.area_name != "鳥取"'.format(year, month, day))
+
         for row in self.cursor.fetchall():
             area_name = row[0]
-            print(area_name)
+            # print(area_name)
             area_list[area_name] += 1
         # print(area_list)
 
-        x = [1,2,3,4,5,6,7,8,9]
+        x = []
+        for i in range(len(area_list)):
+            x.append(i)
         plt.xlabel('地名')
         plt.ylabel('台数')
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.title(f'{year}年 {month}月 {day}日')
         plt.savefig('./images/output_images/daily_bar_graph.png')
         # plt.show()
+        plt.clf()
+        plt.close()
 
-    def generate_monthly_graph(self):
-        now_time = datetime.datetime.now()
-        year = now_time.year
-        month = now_time.month
-        year = 2023
-        month = 11
+    def generate_monthly_graph(self, include_tottori, year, month):
+        # year = 2023
+        # month = 11
         #地名リストを作成
         area_list = {}
-        self.cursor.execute('select area_name from area')
-        for row in self.cursor.fetchall():
-            area = row[0]
-            area_list[area] = 0
+        if include_tottori:
+            self.cursor.execute('select area_name from area')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
 
-        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and\
-            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month))
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year, month))
+
+        else:
+            self.cursor.execute('select area_name from area where area_name != "鳥取"')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
+
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and access.month={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id and\
+                area.area_name != "鳥取"'.format(year, month))
+
         for row in self.cursor.fetchall():
             area_name = row[0]
-            print(area_name)
             area_list[area_name] += 1
         # print(area_list)
 
-        x = [1,2,3,4,5,6,7,8,9]
+        x = []
+        for i in range(len(area_list)):
+            x.append(i)
         plt.xlabel('地名')
         plt.ylabel('台数')
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.title(f'{year}年 {month}月')
         plt.savefig('./images/output_images/monthly_bar_graph.png')
         # plt.show()
+        plt.clf()
+        plt.close()
 
-    def generate_yearly_graph(self):
-        now_time = datetime.datetime.now()
-        year = now_time.year
-        year = 2023
+    def generate_yearly_graph(self,include_tottori, year):
+        # year = 2023
         #地名リストを作成
         area_list = {}
-        self.cursor.execute('select area_name from area')
-        for row in self.cursor.fetchall():
-            area = row[0]
-            area_list[area] = 0
+        if include_tottori:
+            self.cursor.execute('select area_name from area')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
 
-        self.cursor.execute('select area_name from license_plate, access, area where access.year={} and\
-            license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year))
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id'.format(year))
+        else:
+            self.cursor.execute('select area_name from area where area_name != "鳥取"')
+            for row in self.cursor.fetchall():
+                area = row[0]
+                area_list[area] = 0
+
+            self.cursor.execute('select area_name from license_plate, access, area where access.year={} and\
+                license_plate.license_plate_id=access.license_plate_id and license_plate.area_id=area.area_id and\
+                area.area_name != "鳥取"'.format(year))
+
         for row in self.cursor.fetchall():
             area_name = row[0]
-            print(area_name)
             area_list[area_name] += 1
         # print(area_list)
 
-        x = [1,2,3,4,5,6,7,8,9]
+        x = []
+        for i in range(len(area_list)):
+            x.append(i)
         plt.xlabel('地名')
         plt.ylabel('台数')
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
+        plt.title(f'{year}年')
         plt.savefig('./images/output_images/yearly_bar_graph.png')
         # plt.show()
+        plt.clf()
+        plt.close()
 
 if __name__ == '__main__':
     db_controller = DB_controller()

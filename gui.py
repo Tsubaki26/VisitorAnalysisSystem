@@ -8,6 +8,7 @@ from PIL.ExifTags import TAGS
 import cv2
 import os
 import datetime
+from dateutil.relativedelta import relativedelta
 import pathlib
 import time
 
@@ -214,22 +215,130 @@ class App(tk.Frame):
         self.console_message(f'画像サイズを変更 --> ({width},{height})\n')
         # self.canvas.config(width=width, height=height)
         return img
-    
-    def graph_window(self):
-        #グラフ生成
 
+    def graph_window(self):
+
+        self.canvas_graph_image = None
+        sub_window_main_color = self.main_color
+        sub_window_sub_color = self.sub_color
+        sub_window_sub_color = '#FFFFFF'
+        text_var = tk.StringVar()
+        include_tottori = tk.BooleanVar()
+        include_tottori.set(True)
+
+
+        #コンボボックスの選択
         def show_selected(event):
-            print(self.graph_combobox.get())
-            text_var.set(self.graph_combobox.get() + '別グラフ')
+            selected_item = self.graph_combobox.get()
+            text_var.set(selected_item + '別グラフ')
+            # self.graph_combobox.select_clear()
+            self.graph_combobox.set(selected_item)
+            make_graph(selected_item)
+
+        def checked_func():
+            selected_item = self.graph_combobox.get()
+            make_graph(selected_item)
+
+        def make_graph(selected_item):
+            year = self.changed_date.year
+            month = self.changed_date.month
+            day = self.changed_date.day
+
+            if selected_item == '日':
+                #日別グラフ生成
+                self.db_controller.generate_daily_graph(include_tottori.get(), year, month, day)
+                #グラフ表示
+                show_graph('daily_bar_graph')
+
+            elif selected_item == '月':
+                #月別グラフ生成
+                self.db_controller.generate_monthly_graph(include_tottori.get(), year, month)
+                #グラフ表示
+                show_graph('monthly_bar_graph')
+
+            elif selected_item == '年':
+                #年別グラフ生成
+                self.db_controller.generate_yearly_graph(include_tottori.get(), year)
+                #グラフ表示
+                show_graph('yearly_bar_graph')
+
+        # def change_date():
+        #     #今日の日付を取得
+        #     now_time = datetime.datetime.now()
+
+        #     selected_item = self.graph_combobox.get()
+        #     if selected_item == '日':
+        #         self.changed_date = now_time + datetime.timedelta(days=self.add_day)
+        #         day = date.day
+        #         month = date.month
+        #         year = date.year
+
+        #     elif selected_item == '月':
+        #         month =now_time + relativedelta(da)
+        #         month = (now_time.month + self.add_month) % 12
+        #         if month == 0: month = 12
+        #         self.add_year += self.add_month // 12
+        #         year = now_time.year + self.add_year
+
+        #     elif selected_item == '年':
+        #         print()
+
+        #     return year, month, day
+
+        def go_next():
+            selected_item = self.graph_combobox.get()
+            if selected_item == '日':
+                # self.add_day += 1
+                self.changed_date += relativedelta(days=1)
+
+            elif selected_item == '月':
+                # self.add_month += 1
+                self.changed_date += relativedelta(months=1)
+
+            elif selected_item == '年':
+                self.changed_date += relativedelta(years=1)
+
+            make_graph(selected_item)
+
+        def go_back():
+            selected_item = self.graph_combobox.get()
+            if selected_item == '日':
+                # self.add_day -= 1
+                self.changed_date += relativedelta(days=-1)
+
+            elif selected_item == '月':
+                # self.add_month -= 1
+                self.changed_date += relativedelta(months=-1)
+
+            elif selected_item == '年':
+                # self.add_year -= 1
+                self.changed_date += relativedelta(years=-1)
+
+            make_graph(selected_item)
 
         def window_configure(event):
             window_height = self.sub_win.winfo_height()
             self.graph_canvas.config(width=int(window_height*0.7), height=int(window_height*0.7))
 
+        def show_graph(graph_name):
+            #グラフ表示
+            self.sub_win.update()
+            graph_image = Image.open(f'./images/output_images/{graph_name}.png')
+            canvas_width = self.graph_canvas.winfo_width()
+            canvas_height = self.graph_canvas.winfo_height()
+            graph_image = self.resize_img(self.graph_canvas, graph_image)
+            self.tk_graph_image = ImageTk.PhotoImage(image=graph_image)
+            self.canvas_graph_image = self.graph_canvas.create_image(int(canvas_width/2),int(canvas_height/2),image=self.tk_graph_image)
+            self.sub_win.update()
 
+        #グラフウィンドウが存在する場合はスキップ
         if self.sub_win == None or not self.sub_win.winfo_exists():
 
-            self.db_controller.generate_daily_graph()
+            self.add_year = 0
+            self.add_month = 0
+            self.add_day = 0
+            self.changed_date = datetime.datetime.now()
+
             self.sub_win = tk.Toplevel()
             self.sub_win.geometry("1000x700")
             self.sub_win.minsize(1000,700)
@@ -237,44 +346,45 @@ class App(tk.Frame):
             self.sub_win.config(bg=self.main_color)
 
             item_list = ['日','月','年']
-            text_var = tk.StringVar()
+
             text_var.set(item_list[0] + '別グラフ')
 
-            label_sub = tk.Label(self.sub_win, textvariable=text_var, font=("meiryo",15), bg=self.main_color, fg='white')
-            label_sub.pack(side=tk.TOP)
-            self.graph_combobox = ttk.Combobox(self.sub_win, values=item_list, state='readonly')
-            self.graph_combobox.pack(side=tk.TOP)
+            label_sub = tk.Label(self.sub_win, textvariable=text_var, font=("meiryo",15), bg=sub_window_main_color, fg='white')
+            label_sub.pack(side=tk.TOP, padx=10, pady=10)
+            choose_frame = tk.Frame(self.sub_win, relief='groove', bg=sub_window_main_color)
+            choose_frame.pack(side=tk.TOP, padx=10, pady=5)
+            self.graph_combobox = ttk.Combobox(choose_frame, values=item_list, state='readonly')
+            self.graph_combobox.pack(side=tk.LEFT, padx=5)
+            self.graph_combobox.set(item_list[0])
+            include_tottori_button = tk.Checkbutton(choose_frame, text='鳥取を含める',
+                                                        variable=include_tottori,bg=sub_window_main_color,command=checked_func,
+                                                        font=("meiryo",10), fg='white', selectcolor='black', padx=10)
+            include_tottori_button.pack(side=tk.LEFT, padx=5)
             self.graph_combobox.bind('<<ComboboxSelected>>', show_selected)
             self.sub_win.update()
             window_height = self.sub_win.winfo_height()
             print(window_height)
             self.graph_canvas = tk.Canvas(self.sub_win, width=int(window_height*0.7), height=int(window_height*0.7),
-                                highlightbackground='gray', highlightthickness=2, bg=self.sub_color)
+                                highlightbackground='gray', highlightthickness=2, bg=sub_window_sub_color)
             self.graph_canvas.pack(side=tk.TOP, fill=tk.X, expand=True, padx=10,pady=10)
             self.graph_canvas.propagate(False)
-            control_frame = tk.Frame(self.sub_win, relief='groove', bg=self.main_color)
+            control_frame = tk.Frame(self.sub_win, relief='groove', bg=sub_window_main_color)
             control_frame.pack(side=tk.TOP, fill=tk.X, padx=10, pady=5)
             back_button = tk.Button(control_frame, text='<< 戻る',
-                                        command = self.graph_window, bg='#44464D',
+                                        command = go_back, bg='#44464D',
                                         font=("meiryo",10), fg='white', padx=10)
             back_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=5)
-            forward_button = tk.Button(control_frame, text='進む >>',
-                                        command = self.graph_window, bg='#44464D',
+            next_button = tk.Button(control_frame, text='進む >>',
+                                        command = go_next, bg='#44464D',
                                         font=("meiryo",10), fg='white', padx=10)
-            forward_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=5)
+            next_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10, pady=5)
 
             self.sub_win.bind('<Configure>', window_configure)
 
+            #日別グラフ生成
+            make_graph(self.graph_combobox.get())
             #グラフ表示
-            self.sub_win.update()
-            graph_image = Image.open('./images/output_images/daily_bar_graph.png')
-            canvas_width = self.graph_canvas.winfo_width()
-            canvas_height = self.graph_canvas.winfo_height()
-            graph_image = self.resize_img(self.graph_canvas, graph_image)
-            # graph_image = graph_image.resize((canvas_width, canvas_height))
-            self.tk_graph_image = ImageTk.PhotoImage(image=graph_image)
-            self.canvas_graph_image = self.graph_canvas.create_image(int(canvas_width/2),int(canvas_height/2),image=self.tk_graph_image)
-            self.sub_win.update()
+            show_graph('daily_bar_graph')
 
     def on_window_configure(self, event):
         self.window_width = root.winfo_width()
