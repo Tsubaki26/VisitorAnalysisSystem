@@ -61,3 +61,6 @@ insert into area values(6, '岡山');
 insert into area values(7, '倉敷');
 insert into area values(8, '山口');
 insert into area values(9, '下関');
+
+
+グラフ　数値をExcel形式で出力できるといいかも．
