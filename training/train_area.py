@@ -1,17 +1,19 @@
 import tensorflow as tf
 import pathlib
 import matplotlib.pyplot as plt
+import sys
 # from keras.applications import EfficientNetB0
 from keras.applications.efficientnet_v2 import EfficientNetV2B0
 from keras.applications.vgg16 import preprocess_input
 
 data_dir = pathlib.Path('./../images/area_images/')
-print(len(list(data_dir.glob('*/*.png'))))  #学習データ数
+total_samples = len(list(data_dir.glob('*/*.png')))
+print(total_samples)  #学習データ数
 
 img_height = 50
 img_width = 100
 batch_size = 64
-epochs = 10
+epochs = 5
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
@@ -21,6 +23,11 @@ train_ds = tf.keras.utils.image_dataset_from_directory(
     image_size=(img_height,img_width),
     batch_size=batch_size
 )
+# print(len(train_ds))
+# train_ds = train_ds.take(total_samples//batch_size//2)
+# print(len(train_ds))
+# sys.exit()
+
 
 val_ds = tf.keras.utils.image_dataset_from_directory(
     data_dir,
@@ -37,6 +44,8 @@ print(class_names)
 
 train_ds = train_ds.map(lambda x, y: (preprocess_input(x), y))
 val_ds = val_ds.map(lambda x, y: (preprocess_input(x), y))
+
+
 
 kana_classes = len(class_names)
 
@@ -71,7 +80,7 @@ history = model.fit(
         validation_data=val_ds
     )
 
-model.save('./../myModels/area_model(e)1')
+model.save('./../myModels/area_model(e)2')
 # tf.saved_model.save(model, './myModels/area_model(e)1')
 
 

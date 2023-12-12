@@ -4,8 +4,8 @@ import numpy as np
 from keras.applications.imagenet_utils import decode_predictions
 from keras.applications.vgg16 import preprocess_input
 
-model = tf.keras.models.load_model("./myModels/area_model(e)1", compile=False) #compile=Falseをつけないとなぜかエラーになる．
-area_list = ['山口', '岡山', '島根', '広島', '鳥取']
+model = tf.keras.models.load_model("./myModels/area_model(e)2", compile=False) #compile=Falseをつけないとなぜかエラーになる．
+area_list = ['下関', '倉敷', '出雲', '山口', '岡山', '島根', '広島', '福山', '鳥取']
 
 def rc_area(img):
     #img = 255 - img

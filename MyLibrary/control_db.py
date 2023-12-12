@@ -2,7 +2,7 @@ import mysql.connector
 import datetime
 import matplotlib.pyplot as plt
 
-area_threthold = 0.9
+area_threthold = 0.98
 plt.rcParams['font.family'] = 'MS Gothic'
 
 class DB_controller():
