@@ -194,7 +194,7 @@ class App(tk.Frame):
         self.height_label.config(text=f'高さ\t| {height}px')
 
     #画像をキャンバスサイズにリサイズ
-    def resize_img(self,canvas,img):
+    def resize_img(self,canvas,img,message=True):
         self.root.update()
         canvas_width = canvas.winfo_width()
         canvas_height = canvas.winfo_height()
@@ -212,7 +212,8 @@ class App(tk.Frame):
             width = int(old_width*(canvas_height/old_height))
             height = canvas_height
             img = img.resize((width, height))
-        self.console_message(f'画像サイズを変更 --> ({width},{height})\n')
+        if message:
+            self.console_message(f'画像サイズを変更 --> ({width},{height})\n')
         # self.canvas.config(width=width, height=height)
         return img
 
@@ -326,7 +327,7 @@ class App(tk.Frame):
             graph_image = Image.open(f'./images/output_images/{graph_name}.png')
             canvas_width = self.graph_canvas.winfo_width()
             canvas_height = self.graph_canvas.winfo_height()
-            graph_image = self.resize_img(self.graph_canvas, graph_image)
+            graph_image = self.resize_img(self.graph_canvas, graph_image, message=False)
             self.tk_graph_image = ImageTk.PhotoImage(image=graph_image)
             self.canvas_graph_image = self.graph_canvas.create_image(int(canvas_width/2),int(canvas_height/2),image=self.tk_graph_image)
             self.sub_win.update()
@@ -393,7 +394,7 @@ class App(tk.Frame):
     def upadate_img(self):
         self.pil_img = self.resize_img(self.canvas, self.pil_img)
         self.tk_pil_img = ImageTk.PhotoImage(image=self.pil_img)
-        self.canvas_image = self.canvas.create_image(image=self.tk_pil_img)
+        self.canvas_image = self.canvas.create_image(int(self.canvas_width/2),int(self.canvas_height/2), image=self.tk_pil_img)
 
     def run(self):
         self.root.mainloop()

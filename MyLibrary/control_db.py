@@ -23,7 +23,7 @@ class DB_controller():
         kana = results['kana']
         num2 = results['num2']
 
-        if area_accuracy < area_threthold:
+        if area_accuracy < area_threthold*100:
             area = 'other'
 
         # date = dt.split(' ')[0]
