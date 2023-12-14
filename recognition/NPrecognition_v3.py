@@ -49,6 +49,7 @@ def number_plate_recognize(img):
     img_height = 120
     pre_start_time = time.time()
     original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
+    _, original_img = cv2.threshold(original_img, 70, 255, cv2.THRESH_BINARY)   #ローパスフィルタ的なやつ　閾値よりも黒い文字を残す．　これで図柄がほぼ消える．
     pre_end_time = time.time()
     # cv2.imshow("",original_img)
     # cv2.waitKey()
@@ -58,7 +59,7 @@ def number_plate_recognize(img):
     r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index = his.find_split_point(img_erode)                        #分割位置の特定
     # print("aaaa", r_bottom_index)
     #ヒストグラムを出力
-    #! his.draw_hist_2(img_erode, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index)                                #ヒストグラムの表示
+    #!his.draw_hist_2(original_img, r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index)                                #ヒストグラムの表示
     kana_img = his.split(original_img, left1_index, r_index, left_index, r_bottom_index)                        #かなを切り抜く
     # cv2.imshow('kana',kana_img)
     # cv2.waitKey()

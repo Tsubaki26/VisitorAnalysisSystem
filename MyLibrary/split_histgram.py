@@ -24,7 +24,7 @@ def find_split_point(img):
     for i in range(height):
         h = width - np.sum(img[i]) / 255
         histgram_row.append(h)
-        if i > 0 and i < 20:
+        if i > 0 and i < 15:    #２０から変更
             if h <= row_top_min:
                 row_top_min = h
                 row_top_min_index = i
@@ -143,7 +143,9 @@ def draw_hist_2(img, histgram_row, histgram_col, row_top_min_index, row_min_inde
     ax[1][0].bar(x, histgram_col, color='gray')
 
     fig.delaxes(ax[1,1])
-    plt.savefig('./hist.jpg')
+    plt.savefig('./images/output_images/hist.jpg')
+    plt.clf()
+    plt.close()
     #plt.show()
 
 def draw_hist_1(img, histgram_col, left_min_index):
@@ -163,7 +165,9 @@ def draw_hist_1(img, histgram_col, left_min_index):
     x = range(width)
     ax[1].bar(x, histgram_col, color='gray')
 
-    plt.savefig('./hist1.jpg')
+    plt.savefig('./images/output_images/hist1.jpg')
+    plt.clf()
+    plt.close()
     #plt.show()
 
 #テスト##############
