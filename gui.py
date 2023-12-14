@@ -37,7 +37,9 @@ class App(tk.Frame):
 
         self.root.update()
         self.create_widget()
-        self.db_controller = db.DB_controller()
+        self.use_db = False
+        if self.use_db:
+            self.db_controller = db.DB_controller()
 
         self.root.bind('<Configure>', self.on_window_configure)
 
@@ -157,8 +159,9 @@ class App(tk.Frame):
         cv2_img = cv2.resize(cv2_img, (500, 200))
         results, processing_times = npr.number_plate_recognize(cv2_img)
         #データベースに格納
-        self.db_controller.insert_db(results, self.img_path, self.dt)
-        self.console_message("データベースに格納しました．")
+        if self.use_db:
+            self.db_controller.insert_db(results, self.img_path, self.dt)
+            self.console_message("データベースに格納しました．")
 
         self.area_label.config(text=f"地名\t\t| {results['area'][0]}({results['area'][1]:.2f}%)")
         self.num1_label.config(text=f"分類番号\t\t| {results['num1']}")

@@ -1,19 +1,53 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib import colors
+
+# image = cv2.imread(f'./images/test_images_2/test_6.jpg')
+# hsvimage = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+# h, s, v = cv2.split(hsvimage)
+# print(h)
+
+# cv2.imshow("original", image)
+# cv2.imshow("hsv", hsvimage)
+# cv2.imshow("h", h)
+
+
+# cv2.waitKey()
+
 
 for i in range(12):
-    image = cv2.imread(f'./images/gotouchi/test{i+1}.jpg')
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # image = cv2.imread(f'./images/gotouchi/test{i+1}.jpg')
+    image = cv2.imread(f'./images/test_images_2/test_{i+1}.jpg')
+    imagegray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # image ?= image.astype(np.uint1?)
+    # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    # image_k = clahe.apply(image)
 
-    # image_2 = image - 75 #色の数字はループしていた．６０を足すと文字だけ真っ白になる．
-    # threshold_value = 190
-    # _, thresholded_image = cv2.threshold(image_2, threshold_value, 255, cv2.THRESH_BINARY)
-    # image_3 = 255 - thresholded_image
+    # image2 = cv2.convertScaleAbs(image, alpha=2, beta=50)
 
-    _, image_3 = cv2.threshold(image, 70, 255, cv2.THRESH_BINARY)
-    # image_3 = 255 - thresholded_image
+    img_b, img_g, img_r = cv2.split(image)
 
-    cv2.imshow("original", image)
+    # Add required value
+    img_b = cv2.add(img_b, img_b)
+    img_g = cv2.add(img_g, img_g)
+    img_r = cv2.add(img_r, img_r)
+
+    # Merge each cannels
+    image2 = cv2.merge([img_b, img_g, img_r])
+
+    image2 = cv2.add(image, 50)
+
+    image2 = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    _, image_3 = cv2.threshold(image2, 70, 255, cv2.THRESH_BINARY)
+
+    # cv2.imshow("k", image_k)
+    cv2.imshow("original", imagegray)
+    cv2.imshow("aaa", image2)
     cv2.imshow("image3", image_3)
 
     cv2.waitKey()
