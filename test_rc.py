@@ -4,6 +4,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 # from test_data import test_annotation as ta
 from test_data import test_annotation2 as ta
+# from test_data import test_annotation3 as ta
+
 import glob
 import natsort
 import difflib
@@ -18,6 +20,7 @@ from recognition import NPrecognition_v3 as npr
 file_path_list = []
 # files = glob.glob('./images/test_images/*.jpg')
 files = glob.glob('./images/test_images_2/*.jpg')
+# files = glob.glob('./images/test_images_3/*.jpg')
 for i in natsort.natsorted(files):
     file_path_list.append(i)
 
@@ -27,6 +30,7 @@ correct_kana = 0
 correct_num2 = 0
 correct_all  = 0
 bad_area = []
+bad_area_p = []
 bad_num1 = []
 bad_kana = []
 bad_num2 = []
@@ -50,7 +54,7 @@ for index, path in enumerate(file_path_list):
     # img = cv2.imread(path)
     pil_img = Image.open(path)
     img = np.array(pil_img, dtype=np.uint8)
-    img = cv2.resize(img, (500, 200))
+    img = cv2.resize(img, (500, 500))
     # pil_img = Image.open(path)
     # cv2_img = np.array(pil_img, dtype=np.uint8)
     # results, p_time, s_time, a_time, n1_time, k_time, n2_time, pros_time = number_plate_recognize(cv2_img)
@@ -71,6 +75,7 @@ for index, path in enumerate(file_path_list):
     else:
         area = 0
         bad_area.append(index)
+        bad_area_p.append(int(results['area'][1]))
         bad_area_pos.append("\n".join(difflib.ndiff(ta.annotation[index][0], results["area"][0])))
     #num1の正誤判定
     if results['num1'] == ta.annotation[index][1]:
@@ -133,6 +138,7 @@ print("average of num2 time\t\t| {:.4f}".format(num2_time / len(file_path_list))
 
 print("BAD RECOGNITION INDEX-----------------")
 print("areaを誤認識した画像: {}".format(bad_area))
+print("areaの信頼度{}\n".format(bad_area_p))
 # for i in bad_area_pos:
 #     print("==============")
 #     print(i)

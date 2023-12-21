@@ -5,7 +5,7 @@ import sys
 #外部ライブラリ
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 import matplotlib.pyplot as plt
 
 #自作ライブラリ
@@ -49,7 +49,7 @@ def number_plate_recognize(img):
     img_height = 120
     pre_start_time = time.time()
     original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
-    _, original_img = cv2.threshold(original_img, 70, 255, cv2.THRESH_BINARY)   #ローパスフィルタ的なやつ　閾値よりも黒い文字を残す．　これで図柄がほぼ消える．
+    # _, original_img = cv2.threshold(original_img, 70, 255, cv2.THRESH_BINARY)   #ローパスフィルタ的なやつ　閾値よりも黒い文字を残す．　これで図柄がほぼ消える．
     pre_end_time = time.time()
     # cv2.imshow("",original_img)
     # cv2.waitKey()
@@ -89,7 +89,8 @@ def number_plate_recognize(img):
     #*地域の処理（未完成）
     area_start_time = time.time()
     kernel = np.ones((2,2), np.uint8)
-    area_img = cv2.erode(area_img, kernel, iterations=2)
+    area_img = cv2.dilate(area_img, kernel, iterations=1)
+    area_img = cv2.erode(area_img, kernel, iterations=1)
     area_img = cv2.cvtColor(area_img, cv2.COLOR_GRAY2BGR)
     results['area'] = rc_area.rc_area(area_img)
     area_end_time = time.time()
@@ -108,7 +109,7 @@ def number_plate_recognize(img):
         # cv2.imshow("", img)
         # cv2.waitKey()
         # img = cv2.GaussianBlur(img, (3,3),0)
-        img = cv2.medianBlur(img, 3)
+        # img = cv2.medianBlur(img, 3)
         # ratio = 1.3
         # img_width = img.shape[1]
         # img_height = img.shape[0]
@@ -122,6 +123,25 @@ def number_plate_recognize(img):
         # right = int(img_big_width/2 + img_width/2)
 
         # img = img_big[top:bottom, left:right]
+
+
+        # kernel = np.ones((2,2), np.uint8)
+        # img = cv2.erode(img, kernel, iterations=1)
+
+        """画像サイズを大きくしてから処理すればいけるかも？"""
+        img2 = 255-img
+        # 円形（なめらか）に膨張
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3)) # 膨張サイズは適当に
+        img2 = cv2.morphologyEx(img2, cv2.MORPH_DILATE, kernel)
+
+        # モード（最頻）フィルターを適用
+        img2 = Image.fromarray(img2) # cv -> PIL
+        img2 = img2.filter(ImageFilter.ModeFilter(3))
+        img2 = np.array(img2, dtype=np.uint8) # PIL -> cv
+
+        # 外接する輪郭を取得して内部を塗りつぶす
+        contours, hierarchy = cv2.findContours(img2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        img = cv2.drawContours(img, contours, -1, (0,0,0), thickness=cv2.FILLED)
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
         # cv2.imshow("num1",img)
         # cv2.waitKey()
