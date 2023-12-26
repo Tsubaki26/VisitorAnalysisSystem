@@ -129,20 +129,25 @@ def number_plate_recognize(img):
         # img = cv2.erode(img, kernel, iterations=1)
 
         """画像サイズを大きくしてから処理すればいけるかも？"""
-        img2 = 255-img
-        # 円形（なめらか）に膨張
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3)) # 膨張サイズは適当に
-        img2 = cv2.morphologyEx(img2, cv2.MORPH_DILATE, kernel)
+        # img = cv2.resize(img, (32*3,54*3))
+        # kernel = np.ones((5,5), np.uint8)
+        # img = cv2.erode(img, kernel, iterations=2)
+        # img = cv2.GaussianBlur(img, (7,9),0)
+        # img2 = 255-img
+        # # 円形（なめらか）に膨張
+        # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3)) # 膨張サイズは適当に
+        # img2 = cv2.morphologyEx(img2, cv2.MORPH_DILATE, kernel)
 
-        # モード（最頻）フィルターを適用
-        img2 = Image.fromarray(img2) # cv -> PIL
-        img2 = img2.filter(ImageFilter.ModeFilter(3))
-        img2 = np.array(img2, dtype=np.uint8) # PIL -> cv
+        # # モード（最頻）フィルターを適用
+        # img2 = Image.fromarray(img2) # cv -> PIL
+        # img2 = img2.filter(ImageFilter.ModeFilter(3))
+        # img2 = np.array(img2, dtype=np.uint8) # PIL -> cv
 
-        # 外接する輪郭を取得して内部を塗りつぶす
-        contours, hierarchy = cv2.findContours(img2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        img = cv2.drawContours(img, contours, -1, (0,0,0), thickness=cv2.FILLED)
+        # # 外接する輪郭を取得して内部を塗りつぶす
+        # contours, hierarchy = cv2.findContours(img2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # img = cv2.drawContours(img, contours, -1, (0,0,0), thickness=cv2.FILLED)
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        img = cv2.resize(img, (32,54))
         # cv2.imshow("num1",img)
         # cv2.waitKey()
         result, acc_result = rc_num.rc_num(img)

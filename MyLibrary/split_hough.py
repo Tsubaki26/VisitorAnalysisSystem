@@ -17,7 +17,7 @@ def split(img):
 
     line_list = [(0,img.shape[0], 0, 0)]
     k = 3
-    judgelength = img.shape[0] * 0.8
+    judgelength = img.shape[0] * 0.8        #! 0.8から変更
     isLine = False
     #検出した縦線を描画
     for line in lines:
