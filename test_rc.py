@@ -117,8 +117,10 @@ for index, path in enumerate(file_path_list):
     process_time += processing_times['process_time']
     print("==============")
     print("処理時間｜{} s".format(processing_times['process_time']))
-    print("==============")
+    print("==============\n")
 
+print("TEST SET DIRECTORY------------------------------")
+print(f"{file_path_list[0].split('/')[-2]}")
 print("ACCURACY------------------------------")
 print("accuracy of all | {}%".format(correct_all / len(file_path_list) * 100))
 print("accuracy of area| {}%".format(correct_area / len(file_path_list) * 100))
