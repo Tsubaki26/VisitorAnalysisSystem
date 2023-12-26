@@ -39,9 +39,9 @@ def toLight(image, a):
                     result[i][j][k] = 255
     return result
 
-def save_img(image):
+def save_img(image, dir_name):
     global count
-    cv2.imwrite(f"./../images/test_images_3/test_{count}.jpg", image)
+    cv2.imwrite(f"./../images/{dir_name}/test_{count}.jpg", image)
     count += 1
 
 file_path_list = []
@@ -51,16 +51,18 @@ for i in natsort.natsorted(files):
 
 count = 0
 
+dirname = 'test_images_2_light'
 for image_path in file_path_list:
     image = cv2.imread(image_path)
 
-    image_dark_all = toDark_all(image, 50)
-    image_dark_top = toDark_top(image, 30)
-    image_dark_all_top = toDark_top(image_dark_all, 30)
-    image_light = toLight(image, 50)
+    # image_dark_all_50 = toDark_all(image, 70)
+    
+    # image_dark_top = toDark_top(image, 50)
+    # image_dark_all_top = toDark_top(image_dark_all, 30)
+    image_light = toLight(image, 40)
 
-    save_img(image)
-    save_img(image_dark_all)
-    save_img(image_dark_top)
-    save_img(image_dark_all_top)
-    save_img(image_light)
+    # save_img(image)
+    # save_img(image_dark_all_50,dirname)
+    # save_img(image_dark_top,dirname)
+    # save_img(image_dark_all_top)
+    save_img(image_light,dirname)
