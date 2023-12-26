@@ -25,7 +25,7 @@ def find_split_point(img):
         h = width - np.sum(img[i]) / 255
         histgram_row.append(h)
         if i > 0 and i < 15:    #２０から変更
-            if h < row_top_min:
+            if h <= row_top_min:
                 row_top_min = h
                 row_top_min_index = i
         if i > 30 and i < 60:

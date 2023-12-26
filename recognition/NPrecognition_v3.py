@@ -88,9 +88,11 @@ def number_plate_recognize(img):
 
     #*地域の処理（未完成）
     area_start_time = time.time()
-    kernel = np.ones((2,2), np.uint8)
-    area_img = cv2.dilate(area_img, kernel, iterations=1)
-    area_img = cv2.erode(area_img, kernel, iterations=1)
+    # kernel = np.ones((2,2), np.uint8)
+    # area_img = cv2.dilate(area_img, kernel, iterations=1)
+    # area_img = cv2.erode(area_img, kernel, iterations=1)
+    # area_img = cv2.medianBlur(area_img, 3)
+    area_img = cv2.GaussianBlur(area_img, (3,3),0)
     area_img = cv2.cvtColor(area_img, cv2.COLOR_GRAY2BGR)
     results['area'] = rc_area.rc_area(area_img)
     area_end_time = time.time()
