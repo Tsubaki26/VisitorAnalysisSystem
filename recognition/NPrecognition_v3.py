@@ -25,7 +25,7 @@ file_path = "./images/test_kei/test_10.jpg"
 
 img = cv2.imread(file_path)                                             #画像読み込み
 
-def number_plate_recognize(img):
+def number_plate_recognize(img, img_width=340, img_height=170):
     start_time = time.time()
     # area は認識結果と信頼度
     results = {
@@ -45,8 +45,10 @@ def number_plate_recognize(img):
     }
 
     #正規化の際の画像サイズを設定
-    img_width = 240
-    img_height = 120
+    # img_width = 240
+    # img_height = 120
+    # img_width = 480
+    # img_height = 240
 
     pre_start_time = time.time()
     original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
@@ -64,7 +66,7 @@ def number_plate_recognize(img):
     kana_img = his.split(original_img, left1_index, r_index, left_index, r_bottom_index)                        #かなを切り抜く
     # cv2.imshow('kana',kana_img)
     # cv2.waitKey()
-    num2_img = his.split(original_img, left_index, r_index, img.shape[1], r_bottom_index)          #下数字を切り抜く
+    num2_img = his.split(original_img, left_index, r_index, img_width, r_bottom_index)          #下数字を切り抜く
     area_num_img = his.split(original_img, left_index, r_top_index, right_index, r_index)                    #地域・上数字を切り抜く
     # cv2.imshow("area&num1",area_num_img)
     # cv2.waitKey()
@@ -177,10 +179,10 @@ def number_plate_recognize(img):
     # 垂直方向の黒ピクセル数を計算
     black_pixel_count_vertical = np.sum(kana_img==0, axis=0)
     # 画像幅の8割以上の行が黒ピクセル数であれば白で染める
-    threshold_h = int(0.8 * img_width)
-    threshold_v = int(1 * img_height)
     kana_img_h = kana_img.shape[0]
     kana_img_w = kana_img.shape[1]
+    threshold_h = int(0.8 * kana_img_w)
+    threshold_v = int(0.8 * kana_img_h)
     for i in range(kana_img_h):
         if black_pixel_count_horizontal[i] >= threshold_h:
             kana_img[i, :] = 255
@@ -189,6 +191,7 @@ def number_plate_recognize(img):
             kana_img[:, i] = 255
     #幅10の余白を追加
     padding_side = int((kana_img.shape[0]-kana_img.shape[1])/2)
+    # if kana_img != []:
     kana_img = cv2.copyMakeBorder(kana_img,0,0,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
     # cv2.imshow("",kana_img)
     # cv2.waitKey()
