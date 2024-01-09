@@ -1,0 +1,98 @@
+TEST SET DIRECTORY------------------------------
+test_images_2
+ACCURACY------------------------------
+accuracy of all | 73.53%
+accuracy of area| 91.18%
+accuracy of num1| 82.35%
+accuracy of kana| 97.06%
+accuracy of num2| 100.00%
+TIME----------------------------------
+average of all process time     | 0.8800
+average of preprocessing time   | 0.0008
+average of split time           | 0.0051
+average of area time            | 0.1459
+average of num1 time            | 0.2720
+average of kana time            | 0.1011
+average of num2 time            | 0.3550
+BAD RECOGNITION INDEX-----------------
+areaを誤認識した画像: [20, 21, 24]
+areaの信頼度[87, 30, 49]
+
+num1を誤認識した画像: [8, 11, 13, 18, 19, 21]
+kanaを誤認識した画像: [4]
+num2を誤認識した画像: []
+
+TEST SET DIRECTORY------------------------------
+test_images_2_dark
+ACCURACY------------------------------
+accuracy of all | 70.59%
+accuracy of area| 85.29%
+accuracy of num1| 82.35%
+accuracy of kana| 100.00%
+accuracy of num2| 97.06%
+TIME----------------------------------
+average of all process time     | 0.8816
+average of preprocessing time   | 0.0007
+average of split time           | 0.0046
+average of area time            | 0.1162
+average of num1 time            | 0.2972
+average of kana time            | 0.1029
+average of num2 time            | 0.3599
+BAD RECOGNITION INDEX-----------------
+areaを誤認識した画像: [3, 9, 21, 22, 23]
+areaの信頼度[53, 82, 37, 47, 43]
+
+num1を誤認識した画像: [13, 18, 19, 21, 24, 25]
+kanaを誤認識した画像: []
+num2を誤認識した画像: [23]
+
+
+TEST SET DIRECTORY------------------------------
+test_images_2_dark_top
+ACCURACY------------------------------
+accuracy of all | 70.59%
+accuracy of area| 88.24%
+accuracy of num1| 76.47%
+accuracy of kana| 100.00%
+accuracy of num2| 97.06%
+TIME----------------------------------
+average of all process time     | 0.8275
+average of preprocessing time   | 0.0006
+average of split time           | 0.0041
+average of area time            | 0.1093
+average of num1 time            | 0.2767
+average of kana time            | 0.0976
+average of num2 time            | 0.3390
+BAD RECOGNITION INDEX-----------------
+areaを誤認識した画像: [3, 9, 21, 24]
+areaの信頼度[53, 70, 67, 83]
+
+num1を誤認識した画像: [11, 13, 18, 19, 20, 21, 24, 25]
+kanaを誤認識した画像: []
+num2を誤認識した画像: [24]
+
+
+TEST SET DIRECTORY------------------------------
+test_images_2_light
+ACCURACY------------------------------
+accuracy of all | 70.59%
+accuracy of area| 91.18%
+accuracy of num1| 79.41%
+accuracy of kana| 91.18%
+accuracy of num2| 97.06%
+TIME----------------------------------
+average of all process time     | 0.8240
+average of preprocessing time   | 0.0007
+average of split time           | 0.0042
+average of area time            | 0.1178
+average of num1 time            | 0.2547
+average of kana time            | 0.1032
+average of num2 time            | 0.3434
+BAD RECOGNITION INDEX-----------------
+areaを誤認識した画像: [11, 21, 29]
+areaの信頼度[84, 46, 74]
+
+num1を誤認識した画像: [0, 11, 17, 18, 19, 21, 24]
+kanaを誤認識した画像: [0, 2, 4]
+num2を誤認識した画像: [21]
+
