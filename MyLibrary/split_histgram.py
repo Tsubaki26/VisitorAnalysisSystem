@@ -24,15 +24,18 @@ def find_split_point(img):
     for i in range(height):
         h = width - np.sum(img[i]) / 255
         histgram_row.append(h)
-        if i > 0 and i < 15:    #２０から変更
+        #* if i > 0 and i < 15:    #２０から変更
+        if i > height * 0 and i < int(height * 0.125):  #標準化した
             if h <= row_top_min:
                 row_top_min = h
                 row_top_min_index = i
-        if i > 30 and i < 60:
+        #* if i > 30 and i < 60:
+        if i > int(height * 0.25) and i < int(height * 0.5):    #標準化した
             if h <= row_min:
                 row_min = h
                 row_min_index = i
-        if i > 100 and i < 115:
+        #* if i > 100 and i < 115:
+        if i > int(height * 0.8533333333) and i < int(height * 0.9583333333):   #標準化した
             if h < row_bottom_min:
                 row_bottom_min = h
                 row_bottom_min_index = i
@@ -50,15 +53,18 @@ def find_split_point(img):
     for i in range(width):
         h = height - np.sum(t_img[i]) / 255
         histgram_col.append(h)
-        if i > 0 and i < 20:
+        #* if i > 0 and i < 20:
+        if i > int(width * 0) and i < int(width * 0.08333333333):   #標準化した
             if h < left_min1:
                 left_min1 = h
                 left_min1_index = i
-        if i > 40 and i < 70:
+        #* if i > 40 and i < 70:
+        if i > int(width * 0.1666666666) and i < int(width * 0.2916666666): #標準化した
             if h < left_min:
                 left_min = h
                 left_min_index = i
-        if i > 170 and i < 200:
+        #* if i > 170 and i < 200:
+        if i > int(width * 0.7083333333) and i < int(width * 0.8333333333): #標準化した
             if h < right_min:
                 right_min = h
                 right_min_index = i

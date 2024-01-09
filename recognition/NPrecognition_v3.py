@@ -47,6 +47,7 @@ def number_plate_recognize(img):
     #正規化の際の画像サイズを設定
     img_width = 240
     img_height = 120
+
     pre_start_time = time.time()
     original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
     # _, original_img = cv2.threshold(original_img, 70, 255, cv2.THRESH_BINARY)   #ローパスフィルタ的なやつ　閾値よりも黒い文字を残す．　これで図柄がほぼ消える．
