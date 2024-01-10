@@ -2,6 +2,7 @@ import cv2
 import copy
 import glob
 import natsort
+import sys
 
 
 def toDark_top(image, a):
@@ -51,18 +52,32 @@ for i in natsort.natsorted(files):
 
 count = 0
 
-dirname = 'test_images_2_light'
-for image_path in file_path_list:
-    image = cv2.imread(image_path)
+dirname = 'dark/test_images_2_dark'
+for i in range(10, 240, 10):
+    print(i)
+    for image_path in file_path_list:
+        image = cv2.imread(image_path)
 
-    # image_dark_all_50 = toDark_all(image, 70)
-    
-    # image_dark_top = toDark_top(image, 50)
-    # image_dark_all_top = toDark_top(image_dark_all, 30)
-    image_light = toLight(image, 40)
+        # image_dark_all = toDark_all(image, 230)
+        # cv2.imshow("",image_dark_all)
+        # cv2.waitKey()
+        # sys.exit()
+        
+        # image_dark_top = toDark_top(image, 50)
+        # image_dark_all_top = toDark_top(image_dark_all, 30)
+        # image_light = toLight(image, 40)
 
-    # save_img(image)
-    # save_img(image_dark_all_50,dirname)
-    # save_img(image_dark_top,dirname)
-    # save_img(image_dark_all_top)
-    save_img(image_light,dirname)
+        # save_img(image)
+        # save_img(image_dark_all,dirname)
+        # save_img(image_dark_top,dirname)
+        # save_img(image_dark_all_top)
+        # save_img(image_light,dirname)
+
+        image_dark_all = toDark_all(image, i)
+        
+        # image_dark_top = toDark_top(image, 50)
+        # image_dark_all_top = toDark_top(image_dark_all, 30)
+        # image_light = toLight(image, 40)
+
+        # save_img(image)
+        save_img(image_dark_all,'{}_{}'.format(dirname,i))

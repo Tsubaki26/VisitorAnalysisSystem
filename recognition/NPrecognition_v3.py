@@ -192,29 +192,33 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     #幅10の余白を追加
     padding_side = int((kana_img.shape[0]-kana_img.shape[1])/2)
     # if kana_img != []:
-    kana_img = cv2.copyMakeBorder(kana_img,0,0,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
-    # cv2.imshow("",kana_img)
-    # cv2.waitKey()
-    # kana_img=cv2.resize(kana_img, (54, 54))
-    # cv2.imshow("denoised", kana_img)
-    # cv2.waitKey()
-    ratio = 1.5
-    img_width = kana_img.shape[1]
-    img_height = kana_img.shape[0]
-    img_big = cv2.resize(kana_img, (int(img_width*ratio), int(img_height*ratio)))
-    img_big_width = img_big.shape[1]
-    img_big_height = img_big.shape[0]
+    print(kana_img)
+    try:
+        kana_img = cv2.copyMakeBorder(kana_img,0,0,padding_side,padding_side,cv2.BORDER_CONSTANT,value=[255,255,255])
+        # cv2.imshow("",kana_img)
+        # cv2.waitKey()
+        # kana_img=cv2.resize(kana_img, (54, 54))
+        # cv2.imshow("denoised", kana_img)
+        # cv2.waitKey()
+        ratio = 1.5
+        img_width = kana_img.shape[1]
+        img_height = kana_img.shape[0]
+        img_big = cv2.resize(kana_img, (int(img_width*ratio), int(img_height*ratio)))
+        img_big_width = img_big.shape[1]
+        img_big_height = img_big.shape[0]
 
-    top = int(img_big_height/2 - img_height/2)
-    bottom = int(img_big_height/2 + img_height/2)
-    left = int(img_big_width/2 - img_width/2)
-    right = int(img_big_width/2 + img_width/2)
+        top = int(img_big_height/2 - img_height/2)
+        bottom = int(img_big_height/2 + img_height/2)
+        left = int(img_big_width/2 - img_width/2)
+        right = int(img_big_width/2 + img_width/2)
 
-    kana_img = img_big[top:bottom, left:right]
-    kana_img = cv2.cvtColor(kana_img, cv2.COLOR_GRAY2BGR)
-    # cv2.imshow('kana',kana_img)
-    # cv2.waitKey()
-    results['kana'] = rc_kana.rc_kana(kana_img)
+        kana_img = img_big[top:bottom, left:right]
+        kana_img = cv2.cvtColor(kana_img, cv2.COLOR_GRAY2BGR)
+        # cv2.imshow('kana',kana_img)
+        # cv2.waitKey()
+        results['kana'] = rc_kana.rc_kana(kana_img)
+    except:
+        results['kana'] = ''
     kana_end_time = time.time()
     print(results['kana'])
 
