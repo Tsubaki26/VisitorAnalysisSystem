@@ -37,7 +37,7 @@ class App(tk.Frame):
 
         self.root.update()
         self.create_widget()
-        self.use_db = False
+        self.use_db = True
         if self.use_db:
             self.db_controller = db.DB_controller()
 
