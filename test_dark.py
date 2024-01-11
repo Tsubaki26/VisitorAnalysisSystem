@@ -14,9 +14,10 @@ from recognition import NPrecognition_v3 as npr
 
 
 
-for dark in range(90, 240, 10):
+for dark in range(10, 240, 10):
     file_path_list = []
     files = glob.glob('./images/dark/test_images_2_dark_{}/*.jpg'.format(dark))
+    # files = glob.glob('./images/dark_top/test_images_2_dark_top_{}/*.jpg'.format(dark))
     for i in natsort.natsorted(files):
         file_path_list.append(i)
 
@@ -101,6 +102,7 @@ for dark in range(90, 240, 10):
 
     #精度を追記
     with open('./test_dark_log_acc.txt', 'a') as f_acc:
+    # with open('./test_dark_top_log_acc.txt', 'a') as f_acc:
         print('{},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f}'.format(
             dark,
             correct_all / len(file_path_list) * 100,
