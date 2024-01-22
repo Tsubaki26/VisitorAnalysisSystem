@@ -4,6 +4,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 # from test_data import test_annotation as ta
 from test_data import test_annotation2 as ta
+# from test_data import test_annotation3 as ta
+# from test_data import test_annotation_gotouchi as ta
 
 import glob
 import natsort
@@ -18,10 +20,13 @@ from recognition import NPrecognition_v3 as npr
 
 file_path_list = []
 # files = glob.glob('./images/test_images/*.jpg')
-# files = glob.glob('./images/test_images_2/*.jpg')
-files = glob.glob('./images/test_images_2_dark/*.jpg')
+files = glob.glob('./images/test_images_2/*.jpg')
+# files = glob.glob('./images/test_images_2_2/*.jpg')
+# files = glob.glob('./images/test_images_2_dark/*.jpg')
 # files = glob.glob('./images/test_images_2_dark_top/*.jpg')
 # files = glob.glob('./images/test_images_2_light/*.jpg')
+# files = glob.glob('./images/gotouchi/*.jpg')
+
 for i in natsort.natsorted(files):
     file_path_list.append(i)
 
