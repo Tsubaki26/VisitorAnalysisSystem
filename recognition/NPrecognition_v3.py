@@ -37,6 +37,7 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     processing_times = {
         'pre_time':0,
         'split_time':0,
+        'split_hough_time':0,
         'area_time':0,
         'num1_time':0,
         'kana_time':0,
@@ -84,9 +85,9 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     #! his.draw_hist_1(area_num_img, c_hist, left_index)
     area_img = his.split(area_num_img, 0, 0, left_index, area_num_img.shape[0])
     num1_img = his.split(area_num_img_th, left_index+1, 0, area_num_img.shape[1], area_num_img.shape[0])
+    split_end_time = time.perf_counter()
     original_num1_img = num1_img
     cv2.imwrite('./images/output_images/num1.jpg', original_num1_img)
-    split_end_time = time.perf_counter()
 
 
     #*地域の処理（未完成）
@@ -107,7 +108,9 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     num1_start_time = time.perf_counter()
     # cv2.imshow("num1",num1_img)
     # cv2.waitKey()
+    split_hough_1_start_time = time.perf_counter()
     sp_img_list = hough.split(num1_img)                      #ハフ変換により数字を分割
+    split_hough_1_end_time = time.perf_counter()
     #! hough.draw_images(sp_img_list, 'num1_split')                              #分割結果の表示
     result_num1 = ""
     for img in sp_img_list:
@@ -237,7 +240,9 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     # his.find_split_point_number(num2_img)
     # cv2.imshow("",num2_img)
     # cv2.waitKey()
+    split_hough_2_start_time = time.perf_counter()
     sp_img_list = hough.split(num2_img)                      #ハフ変換により数字を分割
+    split_hough_2_end_time = time.perf_counter()
     #! hough.draw_images(sp_img_list, 'num2_split')                              #分割結果の表示
     result_num2 = ""
     # print("list len", len(sp_img_list))
@@ -281,6 +286,7 @@ def number_plate_recognize(img, img_width=340, img_height=170):
 
     processing_times['pre_time'] = pre_end_time - pre_start_time
     processing_times['split_time'] = split_end_time - split_start_time
+    processing_times['split_hough_time'] = split_hough_1_end_time - split_hough_1_start_time + split_hough_2_end_time - split_hough_2_start_time
     processing_times['area_time'] = area_end_time - area_start_time
     processing_times['num1_time'] = num1_end_time - num1_start_time
     processing_times['num2_time'] = num2_end_time - num2_start_time
@@ -302,6 +308,7 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     print("===================")
     print(f"preprocess time\t\t| {processing_times['pre_time']:.4f}s")
     print(f"histgram split time\t| {processing_times['split_time']:.4f}s")
+    print(f"hough split time\t| {processing_times['split_hough_time']:.4f}s")
     print(f"area recognition time\t| {processing_times['area_time']:.4f}s")
     print(f"num1 recognition time\t| {processing_times['num1_time']:.4f}s")
     print(f"kana recognition time\t| {processing_times['kana_time']:.4f}s")

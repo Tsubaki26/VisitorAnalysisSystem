@@ -47,6 +47,7 @@ bad_num2_pos = []
 process_time    = 0
 pre_time        = 0
 split_time      = 0
+split_hough_time = 0
 area_time       = 0
 num1_time       = 0
 kana_time       = 0
@@ -116,6 +117,7 @@ for index, path in enumerate(file_path_list):
 
     pre_time += processing_times['pre_time']
     split_time += processing_times['split_time']
+    split_hough_time += processing_times['split_hough_time']
     area_time += processing_times['area_time']
     num1_time += processing_times['num1_time']
     kana_time += processing_times['kana_time']
@@ -137,7 +139,8 @@ print("accuracy of num2| {:.2f}%".format(correct_num2 / len(file_path_list) * 10
 print("TIME----------------------------------")
 print("average of all process time\t| {:.8f}".format(process_time / len(file_path_list)))
 print("average of preprocessing time\t| {:.8f}".format(pre_time / len(file_path_list)))
-print("average of split time\t\t| {:.8f}".format(split_time / len(file_path_list)))
+print("average of histgram split time\t| {:.8f}".format(split_time / len(file_path_list)))
+print("average of hough split time\t| {:.8f}".format(split_hough_time / len(file_path_list)))
 print("average of area time\t\t| {:.8f}".format(area_time / len(file_path_list)))
 print("average of num1 time\t\t| {:.8f}".format(num1_time / len(file_path_list)))
 print("average of kana time\t\t| {:.8f}".format(kana_time / len(file_path_list)))
