@@ -26,7 +26,7 @@ file_path = "./images/test_kei/test_10.jpg"
 img = cv2.imread(file_path)                                             #画像読み込み
 
 def number_plate_recognize(img, img_width=340, img_height=170):
-    start_time = time.time()
+    start_time = time.perf_counter()
     # area は認識結果と信頼度
     results = {
         'area':['',0],
@@ -50,15 +50,15 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     # img_width = 480
     # img_height = 240
 
-    pre_start_time = time.time()
+    pre_start_time = time.perf_counter()
     original_img, img_th, img_erode = preprocessing(img, img_width=img_width, img_height=img_height)    #前処理
     # _, original_img = cv2.threshold(original_img, 70, 255, cv2.THRESH_BINARY)   #ローパスフィルタ的なやつ　閾値よりも黒い文字を残す．　これで図柄がほぼ消える．
-    pre_end_time = time.time()
+    pre_end_time = time.perf_counter()
     # cv2.imshow("",original_img)
     # cv2.waitKey()
 
     #*ヒストグラム法による画像分割
-    split_start_time = time.time()
+    split_start_time = time.perf_counter()
     r_hist, c_hist, r_top_index, r_index, r_bottom_index, left1_index, left_index, right_index = his.find_split_point(img_erode)                        #分割位置の特定
     # print("aaaa", r_bottom_index)
     #ヒストグラムを出力
@@ -86,11 +86,11 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     num1_img = his.split(area_num_img_th, left_index+1, 0, area_num_img.shape[1], area_num_img.shape[0])
     original_num1_img = num1_img
     cv2.imwrite('./images/output_images/num1.jpg', original_num1_img)
-    split_end_time = time.time()
+    split_end_time = time.perf_counter()
 
 
     #*地域の処理（未完成）
-    area_start_time = time.time()
+    area_start_time = time.perf_counter()
     # kernel = np.ones((2,2), np.uint8)
     # area_img = cv2.dilate(area_img, kernel, iterations=1)
     # area_img = cv2.erode(area_img, kernel, iterations=1)
@@ -98,13 +98,13 @@ def number_plate_recognize(img, img_width=340, img_height=170):
     area_img = cv2.GaussianBlur(area_img, (3,3),0)
     area_img = cv2.cvtColor(area_img, cv2.COLOR_GRAY2BGR)
     results['area'] = rc_area.rc_area(area_img)
-    area_end_time = time.time()
+    area_end_time = time.perf_counter()
     print(results['area'])
     cv2.waitKey()
 
     #*上数字の処理
     #まだアルファベットには対応していない
-    num1_start_time = time.time()
+    num1_start_time = time.perf_counter()
     # cv2.imshow("num1",num1_img)
     # cv2.waitKey()
     sp_img_list = hough.split(num1_img)                      #ハフ変換により数字を分割
@@ -158,11 +158,11 @@ def number_plate_recognize(img, img_width=340, img_height=170):
         result, acc_result = rc_num.rc_num(img)
         result_num1 += str(result)
     results['num1'] = result_num1
-    num1_end_time = time.time()
+    num1_end_time = time.perf_counter()
     print(results['num1'])
 
     #*かなの処理
-    kana_start_time = time.time()
+    kana_start_time = time.perf_counter()
     # cv2.imshow("",kana_img)
     # cv2.waitKey()
     # kernel = np.ones((2,2), np.uint8)
@@ -219,13 +219,13 @@ def number_plate_recognize(img, img_width=340, img_height=170):
         results['kana'] = rc_kana.rc_kana(kana_img)
     except:
         results['kana'] = ''
-    kana_end_time = time.time()
+    kana_end_time = time.perf_counter()
     print(results['kana'])
 
     #*下数字の処理
     # cv2.imshow("num2",num2_img)
     # cv2.waitKey()
-    num2_start_time = time.time()
+    num2_start_time = time.perf_counter()
     original_num2_img = num2_img
     num2_img = cv2.adaptiveThreshold(num2_img,
                                 255,
@@ -266,9 +266,9 @@ def number_plate_recognize(img, img_width=340, img_height=170):
         while len(result_num2) < 4:
             result_num2 = '・' + result_num2
     results['num2'] = result_num2
-    num2_end_time = time.time()
+    num2_end_time = time.perf_counter()
     print(results['num2'])
-    end_time = time.time()
+    end_time = time.perf_counter()
 
 
     #?出力####################################################################

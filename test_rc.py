@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 # from test_data import test_annotation as ta
-from test_data import test_annotation2 as ta
-# from test_data import test_annotation3 as ta
+# from test_data import test_annotation2 as ta
+from test_data import test_annotation3 as ta
 # from test_data import test_annotation_gotouchi as ta
 
 import glob
@@ -20,8 +20,8 @@ from recognition import NPrecognition_v3 as npr
 
 file_path_list = []
 # files = glob.glob('./images/test_images/*.jpg')
-files = glob.glob('./images/test_images_2/*.jpg')
-# files = glob.glob('./images/test_images_2_2/*.jpg')
+# files = glob.glob('./images/test_images_2/*.jpg')
+files = glob.glob('./images/test_images_2_2/*.jpg')
 # files = glob.glob('./images/test_images_2_dark/*.jpg')
 # files = glob.glob('./images/test_images_2_dark_top/*.jpg')
 # files = glob.glob('./images/test_images_2_light/*.jpg')
@@ -135,13 +135,13 @@ print("accuracy of kana| {:.2f}%".format(correct_kana / len(file_path_list) * 10
 print("accuracy of num2| {:.2f}%".format(correct_num2 / len(file_path_list) * 100))
 
 print("TIME----------------------------------")
-print("average of all process time\t| {:.4f}".format(process_time / len(file_path_list)))
-print("average of preprocessing time\t| {:.4f}".format(pre_time / len(file_path_list)))
-print("average of split time\t\t| {:.4f}".format(split_time / len(file_path_list)))
-print("average of area time\t\t| {:.4f}".format(area_time / len(file_path_list)))
-print("average of num1 time\t\t| {:.4f}".format(num1_time / len(file_path_list)))
-print("average of kana time\t\t| {:.4f}".format(kana_time / len(file_path_list)))
-print("average of num2 time\t\t| {:.4f}".format(num2_time / len(file_path_list)))
+print("average of all process time\t| {:.8f}".format(process_time / len(file_path_list)))
+print("average of preprocessing time\t| {:.8f}".format(pre_time / len(file_path_list)))
+print("average of split time\t\t| {:.8f}".format(split_time / len(file_path_list)))
+print("average of area time\t\t| {:.8f}".format(area_time / len(file_path_list)))
+print("average of num1 time\t\t| {:.8f}".format(num1_time / len(file_path_list)))
+print("average of kana time\t\t| {:.8f}".format(kana_time / len(file_path_list)))
+print("average of num2 time\t\t| {:.8f}".format(num2_time / len(file_path_list)))
 
 
 print("BAD RECOGNITION INDEX-----------------")
