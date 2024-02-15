@@ -1,5 +1,4 @@
 import mysql.connector
-import datetime
 import matplotlib.pyplot as plt
 
 area_threthold = 0.99
