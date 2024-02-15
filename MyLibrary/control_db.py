@@ -26,48 +26,45 @@ class DB_controller():
         if area_accuracy < area_threthold*100:
             area = 'other'
 
-        # date = dt.split(' ')[0]
-        # time = dt.split(' ')[1].split('.')[0]
         date = str(dt.date())
         year, month, day = date.split('-')
         year, month, day = int(year), int(month), int(day)
         time = dt.time()
         #ex. 2023-11-12 23:11:03.900627
 
-        #地名IDを取得
+        #地名DBから地名IDを取得
         self.cursor.execute('select area_id from area where area_name="{}"'.format(area))
         a = self.cursor.fetchall()
         for row in a:
             area_id = row[0]
-        self.cursor.execute('select license_plate_id from license_plate, area where license_plate.area_id={} and class_number="{}" \
+
+        #ナンバープレートDBで同一ナンバーを検索
+        self.cursor.execute('select license_plate_id from license_plate where area_id={} and class_number="{}" \
             and kana="{}" and serial_number="{}"'.format(area_id,num1,kana,num2))
         a = self.cursor.fetchall()
-        print(a)
+        #同一ナンバーが存在した場合
         if a != []:
-            print("aaa")
             for row in a:
+                #ナンバープレートIDを取得
                 license_plate_id = row[0]
-            print(license_plate_id)
             self.cursor.execute('select leave_time from access where license_plate_id={}'.format(license_plate_id))
             a = self.cursor.fetchall()
-            print(a)
+
+            #最新のアクセスを確認し，退場時間にデータが存在しない場合に以下を実行
             if a[0][0] == None:
                 self.cursor.execute('update access set leave_time="{}" where license_plate_id={}'.format(time,license_plate_id))
-                self.cursor.execute('update license_plate set image_path_2="{}" where license_plate_id={}'.format(path,license_plate_id))
+                self.cursor.execute('update access set image_path_2="{}" where license_plate_id={}'.format(path,license_plate_id))
             else:
-                print("kakunou")
-                self.cursor.execute('insert into license_plate(area_id,class_number,kana,serial_number,image_path_1)\
-                    value("{}","{}","{}","{}","{}")'.format(area_id,num1,kana,num2,path))
-                license_plate_id = self.cursor.lastrowid
-                self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time)\
-                    value({},{},{},{},"{}")'.format(license_plate_id,year,month,day,time))
+                self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time, image_path_1)\
+                    value({},{},{},{},"{}","{}")'.format(license_plate_id,year,month,day,time,path))
+
+        #同一ナンバーが存在しない場合
         else:
-            print("kakunou")
-            self.cursor.execute('insert into license_plate(area_id,class_number,kana,serial_number,image_path_1)\
-                value("{}","{}","{}","{}","{}")'.format(area_id,num1,kana,num2,path))
+            self.cursor.execute('insert into license_plate(area_id,class_number,kana,serial_number)\
+                value("{}","{}","{}","{}")'.format(area_id,num1,kana,num2))
             license_plate_id = self.cursor.lastrowid
-            self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time)\
-                value({},{},{},{},"{}")'.format(license_plate_id,year,month,day,time))
+            self.cursor.execute('insert into access(license_plate_id, year, month, day, enter_time, image_path_1)\
+                value({},{},{},{},"{}","{}")'.format(license_plate_id,year,month,day,time,path))
 
         self.conn.commit()
 
@@ -77,9 +74,6 @@ class DB_controller():
             print(row)
 
     def generate_daily_graph(self, include_tottori, year, month, day):
-        # year = 2023
-        # month = 11
-        # day = 12
         #地名リストを作成
         area_list = {}
         if include_tottori:
@@ -102,9 +96,7 @@ class DB_controller():
 
         for row in self.cursor.fetchall():
             area_name = row[0]
-            # print(area_name)
             area_list[area_name] += 1
-        # print(area_list)
 
         x = []
         for i in range(len(area_list)):
@@ -114,13 +106,10 @@ class DB_controller():
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
         plt.title(f'{year}年 {month}月 {day}日')
         plt.savefig('./images/output_images/daily_bar_graph.png')
-        # plt.show()
         plt.clf()
         plt.close()
 
     def generate_monthly_graph(self, include_tottori, year, month):
-        # year = 2023
-        # month = 11
         #地名リストを作成
         area_list = {}
         if include_tottori:
@@ -145,7 +134,6 @@ class DB_controller():
         for row in self.cursor.fetchall():
             area_name = row[0]
             area_list[area_name] += 1
-        # print(area_list)
 
         x = []
         for i in range(len(area_list)):
@@ -155,12 +143,10 @@ class DB_controller():
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
         plt.title(f'{year}年 {month}月')
         plt.savefig('./images/output_images/monthly_bar_graph.png')
-        # plt.show()
         plt.clf()
         plt.close()
 
     def generate_yearly_graph(self,include_tottori, year):
-        # year = 2023
         #地名リストを作成
         area_list = {}
         if include_tottori:
@@ -184,7 +170,6 @@ class DB_controller():
         for row in self.cursor.fetchall():
             area_name = row[0]
             area_list[area_name] += 1
-        # print(area_list)
 
         x = []
         for i in range(len(area_list)):
@@ -194,11 +179,11 @@ class DB_controller():
         plt.bar(x, area_list.values(), tick_label=list(area_list.keys()))
         plt.title(f'{year}年')
         plt.savefig('./images/output_images/yearly_bar_graph.png')
-        # plt.show()
         plt.clf()
         plt.close()
 
 if __name__ == '__main__':
+    #test
     db_controller = DB_controller()
     results = {
         'area':['鳥取',0.99],
@@ -208,4 +193,3 @@ if __name__ == '__main__':
     }
     dt = '2023-11-12 23:11:03.900627'
     db_controller.insert_db(results,'c:/a/b/c.png',dt)
-    # db_controller.show_db()
