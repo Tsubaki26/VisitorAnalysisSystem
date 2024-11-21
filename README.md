@@ -32,6 +32,7 @@
     <img src="./samples/contrast.png" width=500>
 
 - 適応的二値化により、影に影響されずに二値化する。真ん中が通常の二値化で、右が適応的二値化。きれいに二値化されている。
+
     <img src="./samples/tekioutekinitika.png" width=600>
 
 
