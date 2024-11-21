@@ -1,7 +1,7 @@
 import tensorflow as tf
 import cv2
 import numpy as np
-from keras.applications.vgg16 import preprocess_input
+from keras.applications.vgg16 import preprocess_input   # type: ignore
 import time
 
 model = tf.keras.models.load_model("./myModels/num_model(e)3", compile=False)
